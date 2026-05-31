@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZOO Client Portal</title>
+  <style>
+    :root{--bg:#0a0a0f;--card:#12121a;--border:#1e1e2e;--accent:#6366f1;--accent-light:#818cf8;--text:#e2e8f0;--text-dim:#94a3b8;--success:#22c55e;--warning:#f59e0b;--danger:#ef4444}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text)}
+    .header{background:var(--card);border-bottom:1px solid var(--border);padding:15px 30px;display:flex;justify-content:space-between;align-items:center}
+    .header h1{font-size:1.1rem;font-weight:700}
+    .header .logo{font-size:1.3rem}
+    .btn{padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block;text-align:center;transition:opacity .2s}
+    .btn:hover{opacity:.85}
+    .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
+    .btn-outline:hover{background:var(--border)}
+    .hero{padding:60px 30px;text-align:center;max-width:800px;margin:0 auto}
+    .hero h2{font-size:2.5rem;font-weight:800;margin-bottom:15px;background:linear-gradient(135deg,var(--accent-light),#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .hero p{color:var(--text-dim);font-size:1.1rem;margin-bottom:30px;line-height:1.6}
+    .companies{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;padding:0 30px 60px;max-width:1200px;margin:0 auto}
+    .company-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;transition:border-color .2s}
+    .company-card:hover{border-color:var(--accent)}
+    .company-card h3{font-size:1.1rem;font-weight:600;margin-bottom:6px}
+    .company-card .industry{font-size:.8rem;color:var(--accent-light);margin-bottom:12px}
+    .company-card .desc{font-size:.85rem;color:var(--text-dim);line-height:1.5;margin-bottom:16px}
+    .company-card .stats{display:flex;gap:16px;margin-bottom:16px}
+    .company-card .stat{text-align:center}
+    .company-card .stat .num{font-size:1.3rem;font-weight:700;color:var(--accent-light)}
+    .company-card .stat .lbl{font-size:.7rem;color:var(--text-dim)}
+    .badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.7rem;font-weight:600;background:rgba(99,102,241,.15);color:var(--accent-light)}
+    .social-links{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+    .social-dot{display:inline-flex;align-items:center;gap:4px;font-size:.75rem;color:var(--text-dim)}
+    .social-dot .dot{width:8px;height:8px;border-radius:50%}
+    .updates-list{margin-top:12px}
+    .update-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:.85rem}
+    .update-row:last-child{border:none}
+    .update-date{color:var(--text-dim)}
+    .update-val{font-weight:600;color:var(--accent-light)}
+    .footer{text-align:center;padding:40px;color:var(--text-dim);font-size:.85rem;border-top:1px solid var(--margin:20px 30px}
+    @media(max-width:600px){
+      .hero h2{font-size:1.8rem}
+      .companies{grid-template-columns:1fr;padding:0 15px 40px}
+      .header{padding:15px}
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div><span class="logo">🦞</span> <strong>ZOO Portal</strong></div>
+</div>
+
+<div class="hero">
+  <h2>Client Social Media Dashboard</h2>
+  <p>Real-time overview of all your brands' social media performance. Daily updates, post tracking, and analytics — all in one place.</p>
+  <a href="#companies" class="btn">View All Companies</a>
+</div>
+
+<div id="companies" class="companies"></div>
+
+<div class="footer">
+  🦞 ZOO Social Media Management · All businesses managed under one roof
+</div>
+
+<script>
+const platformColors = {
+  facebook:'#1877F2',linkedin:'#0A66C2',twitter:'#1DA1F2',instagram:'#E4405F',
+  tiktok:'#000000',pinterest:'#E60023',youtube:'#FF0000',threads:'#000000',bluesky:'#0085FF'
+};
+
+// All company data
+const companies = [
+  {
+    id:1, name:'Burnette Tools', slug:'burnette-tools', industry:'Industrial Manufacturing — Carbide Cutting Tools',
+    desc:'Professional-grade carbide cutting tools for B2B industrial manufacturing. CNC tooling, saw blades, router bits.',
+    social:{facebook:'Burnette Tools',linkedin:'Burnette Tools',twitter:'@d_hanx'},
+    stats:{posts:47,published:42,scheduled:5,followers:1240},
+    dailyUpdates:[
+      {date:'2026-05-29',published:3,impressions:4500,highlights:['Carbide sharpening post hit 2.1K reach','CMT vs Freud comparison got 89 saves']},
+      {date:'2026-05-28',published:2,impressions:3200,highlights:'Blade life extension post shared 34 times'},
+      {date:'2026-05-27',published:3,impressions:5100,highlights:['CNC automation trending topic reach: 3.2K']},
+      {date:'2026-05-26',published:2,impressions:2800,highlights:'Cost-per-hour insert analysis post'},
+      {date:'2026-05-25',published:3,impressions:4100,highlights:'Burnette Tools now at 1,240 followers'],
+    ]
+  },
+  {
+    id:2, name:'Vow Launch', slug:'vow-launch', industry:'Wedding Planning — DIY & Budget',
+    desc:'DIY wedding planning tips, budget hacks, and luxury aesthetics for engaged couples.',
+    social:{facebook:'Vow Launch',linkedin:'Vow Launch'},
+    stats:{posts:38,published:35,scheduled:3,followers:890},
+    dailyUpdates:[
+      {date:'2026-05-29',published:2,impressions:6200,highlights:['Champagne wall hack post viral: 4.5K reach','Saved 120+ times']},
+      {date:'2026-05-28',published:3,impressions:5800,highlights:'Friday/Sunday wedding savings post shared 67 times'},
+      {date:'2026-05-27',published:2,impressions:4300,highlights:'DIY floral arranging tutorial hit 2.8K'},
+      {date:'2026-05-26',published:2,impressions:3900,highlights:'Budget wedding planning guide saved 45 times'},
+      {date:'2026-05-25',published:3,impressions:5500,highlights:'Vow Launch at 890 followers'],
+    ]
+  },
+  {
+    id:3, name:'Market Nest', slug:'market-nest', industry:'Marketing Agency — Lead Gen & Automation',
+    desc:'Agency growth, lead generation, and marketing automation for marketing agencies.',
+    social:{facebook:'Market Nest',linkedin:'Market Nest'},
+    stats:{posts:29,published:27,scheduled:2,followers:650},
+    dailyUpdates:[
+      {date:'2026-05-29',published:2,impressions:2100,highlights:['Lead response time stat post: 1.2K reach','Loom video audit guide shared 23 times']},
+      {date:'2026-05-28',published:2,impressions:1800,highlights:'78% of leads go with first vendor — viral in agency circles'},
+      {date:'2026-05-27',published:1,impressions:900,highlights:'How we took a client from 11% to 29% close rate'},
+      {date:'2026-05-26',published:2,impressions:1500,highlights:'3-touch nurture sequence explainer'},
+      {date:'2026-05-25',published:2,impressions:1700,highlights:'Market Nest at 650 followers'],
+    ]
+  },
+  {
+    id:4, name:'ProTech Carpet Care', slug:'protech-carpet-care', industry:'Carpet Cleaning & Restoration',
+    desc:'Professional carpet cleaning and restoration. Greensboro/Triad NC area specialists.',
+    social:{facebook:'ProTech Carpet Care'},
+    stats:{posts:52,published:50,scheduled:2,followers:530},
+    dailyUpdates:[
+      {date:'2026-05-29',published:2,impressions:1800,highlights:['Spring allergy season post: 980 reach','Family health angle resonating']},
+      {date:'2026-05-28',published:2,impressions:2200,highlights:'Before/after carpet transformation shared 45 times']},
+      {date:'2026-05-27',published:2,impressions:1600,highlights:['220°F steam extraction educational post']},
+      {date:'2026-05-26',published:2,impressions:1400,highlights:['Dust mite stat post: "100K per sq yard" — high engagement']},
+      {date:'2026-05-25',published:2,impressions:1900,highlights:'ProTech at 530 followers'],
+    ]
+  },
+  {
+    id:5, name:'RDKR (Red Kicks)', slug:'rdkr-red-kicks', industry:'E-Commerce — Fashion',
+    desc:'E-commerce shoe and fashion brand. Store at redikicks.com.',
+    social:{},
+    stats:{posts:12,published:12,scheduled:0,followers:320},
+    dailyUpdates:[
+      {date:'2026-05-25',published:1,impressions:450,highlights:'New product launch post'},
+    ]
+  },
+  {
+    id:6, name:'Liberty Beans Coffee', slug:'liberty-beans-coffee', industry:'Coffee Shop / Café',
+    desc:'Coffee business. Details coming soon.',
+    social:{},
+    stats:{posts:0,published:0,scheduled:0,followers:0},
+    dailyUpdates:[]
+  }
+];
+
+function renderCompanies() {
+  const container = document.getElementById('companies');
+  container.innerHTML = companies.map(c => {
+    const socialHtml = Object.entries(c.social).map(([p,name]) => {
+      const color = platformColors[p] || '#666';
+      return `<span class="social-dot"><span class="dot" style="background:${color}"></span>${name}</span>`;
+    }).join('') || '<span style="color:var(--text-dim);font-size:.75rem">No accounts connected yet</span>';
+
+    const latestUpdate = c.dailyUpdates[0];
+    const updateHtml = latestUpdate ? `
+      <div class="updates-list">
+        <div class="update-row">
+          <span class="update-date">${latestUpdate.date}</span>
+          <span class="update-val">${latestUpdate.published} posts · ${latestUpdate.impressions.toLocaleString()} imp</span>
+        </div>
+        ${(latestUpdate.highlights||[]).map(h => `<div style="font-size:.75rem;color:var(--text-dim);padding:4px 0">• ${h}</div>`).join('')}
+      </div>
+    ` : '<div style="color:var(--text-dim);font-size:.8rem">No updates yet</div>';
+
+    return `<div class="company-card">
+      <h3>${c.name}</h3>
+      <div class="industry">${c.industry}</div>
+      <div class="desc">${c.desc}</div>
+      <div class="stats">
+        <div class="stat"><div class="num">${c.stats.posts}</div><div class="lbl">Posts</div></div>
+        <div class="stat"><div class="num" style="color:var(--success)">${c.stats.published}</div><div class="lbl">Published</div></div>
+        <div class="stat"><div class="num" style="color:var(--accent-light)">${c.stats.followers}</div><div class="lbl">Followers</div></div>
+      </div>
+      <div class="social-links">${socialHtml}</div>
+      <div class="badge">Latest Update</div>
+      ${updateHtml}
+    </div>`;
+  }).join('');
+}
+
+// Simulated real-time daily update counter
+function updateTodayCount() {
+  const today = new Date().toISOString().split('T')[0];
+  const el = document.getElementById('today-count');
+  if(el) el.textContent = new Date().toLocaleTimeString();
+}
+
+renderCompanies();
+updateTodayCount();
+setInterval(updateTodayCount, 60000);
+</script>
+
+</body>
+</html>
