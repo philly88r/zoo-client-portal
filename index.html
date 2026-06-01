@@ -8,225 +8,296 @@
     :root{--bg:#0a0a0f;--card:#12121a;--border:#1e1e2e;--accent:#6366f1;--accent-light:#818cf8;--text:#e2e8f0;--text-dim:#94a3b8;--success:#22c55e;--warning:#f59e0b;--danger:#ef4444}
     *{margin:0;padding:0;box-sizing:border-box}
     body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-    .header{background:var(--card);border-bottom:1px solid var(--border);padding:15px 30px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
-    .header h1{font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:8px}
-    .nav-links{display:flex;gap:20px;align-items:center}
-    .nav-links a{color:var(--text-dim);text-decoration:none;font-size:.9rem;transition:color .2s}
-    .nav-links a:hover,.nav-links a.active{color:var(--text)}
-    .header-right{display:flex;gap:10px;align-items:center}
-    .btn{padding:8px 18px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block;text-align:center;transition:all .2s}
+    /* Login Page */
+    .login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    .login-box{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:45px;max-width:420px;width:100%}
+    .login-box .logo{text-align:center;font-size:2.5rem;margin-bottom:8px}
+    .login-box h1{text-align:center;font-size:1.4rem;font-weight:700;margin-bottom:6px}
+    .login-box .subtitle{text-align:center;color:var(--text-dim);font-size:.9rem;margin-bottom:30px}
+    .form-group{margin-bottom:16px}
+    .form-group label{display:block;font-size:.8rem;font-weight:500;margin-bottom:6px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px}
+    .form-group input{width:100%;padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:1rem;outline:none;transition:border-color .2s}
+    .form-group input:focus{border-color:var(--accent)}
+    .btn{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;transition:all .2s;margin-top:8px}
     .btn:hover{opacity:.85;transform:translateY(-1px)}
     .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
     .btn-outline:hover{background:var(--border)}
-    .btn-sm{padding:6px 14px;font-size:.8rem}
+    .btn-sm{padding:8px 16px;font-size:.85rem;width:auto}
+    .alert{padding:12px 16px;border-radius:10px;margin-bottom:16px;font-size:.9rem}
+    .alert-error{background:rgba(239,68,68,.12);color:var(--danger);border:1px solid rgba(239,68,68,.2)}
+    .alert-success{background:rgba(34,197,94,.12);color:var(--success);border:1px solid rgba(34,197,94,.2)}
+    .divider{height:1px;background:var(--border);margin:20px 0}
+    .demo-accounts{font-size:.75rem;color:var(--text-dim);line-height:1.6}
+    .demo-accounts strong{color:var(--text)}
+    /* Header */
+    .header{background:var(--card);border-bottom:1px solid var(--border);padding:15px 30px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+    .header-left{display:flex;align-items:center;gap:10px}
+    .header h1{font-size:1.1rem;font-weight:700}
+    .header-right{display:flex;gap:12px;align-items:center}
+    .user-badge{display:flex;align-items:center;gap:8px;padding:6px 14px;background:var(--bg);border-radius:8px;font-size:.85rem}
+    .user-badge .avatar{width:28px;height:28px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#fff}
+    /* Main Layout */
     .container{max-width:1200px;margin:0 auto;padding:30px}
-    .hero{text-align:center;padding:40px 0 50px}
-    .hero h2{font-size:2.2rem;font-weight:800;margin-bottom:12px;background:linear-gradient(135deg,var(--accent-light),#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-    .hero p{color:var(--text-dim);font-size:1rem;max-width:600px;margin:0 auto 30px;line-height:1.6}
-    .stats-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;margin-bottom:40px}
+    .page{display:none}
+    .page.active{display:block}
+    /* Stats */
+    .stats-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:15px;margin-bottom:30px}
     .stat-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center}
-    .stat-box .number{font-size:2.2rem;font-weight:700;color:var(--accent-light)}
-    .stat-box .label{font-size:.8rem;color:var(--text-dim);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
-    .section-title{font-size:1.3rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}
-    .companies-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px;margin-bottom:40px}
-    .company-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;transition:all .2s;cursor:pointer}
+    .stat-box .number{font-size:2rem;font-weight:700;color:var(--accent-light)}
+    .stat-box .label{font-size:.75rem;color:var(--text-dim);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+    /* Companies Grid */
+    .section-title{font-size:1.2rem;font-weight:700;margin-bottom:18px;margin-top:10px}
+    .companies-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px;margin-bottom:30px}
+    .company-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;transition:all .2s;cursor:pointer}
     .company-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,0,0,.3)}
-    .company-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
-    .company-card h3{font-size:1.1rem;font-weight:600}
-    .company-card .industry{font-size:.75rem;color:var(--accent-light);margin-bottom:8px}
-    .company-card .desc{font-size:.85rem;color:var(--text-dim);line-height:1.5;margin-bottom:16px}
-    .company-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+    .company-card h3{font-size:1.05rem;font-weight:600;margin-bottom:4px}
+    .company-card .industry{font-size:.75rem;color:var(--accent-light);margin-bottom:10px}
+    .company-card .desc{font-size:.82rem;color:(--text-dim);line-height:1.5;margin-bottom:14px}
+    .company-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
     .company-stat{text-align:center;padding:8px;background:var(--bg);border-radius:8px}
-    .company-stat .num{font-size:1.1rem;font-weight:700;color:var(--accent-light)}
-    .company-stat .lbl{font-size:.65rem;color:var(--text-dim);text-transform:uppercase}
-    .social-links{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
-    .social-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:.75rem;background:var(--bg)}
-    .social-badge .dot{width:7px;height:7px;border-radius:50%}
-    .latest-update{font-size:.8rem;color:var(--text-dim);padding:10px;background:var(--bg);border-radius:8px;border-left:3px solid var(--accent)}
-    .latest-update .date{font-weight:600;color:var(--accent-light);margin-bottom:4px}
-    /* Client Detail Page */
-    .client-page{display:none}
-    .client-page.active{display:block}
-    .back-btn{display:inline-flex;align-items:center;gap:6px;color:var(--text-dim);text-decoration:none;font-size:.9rem;margin-bottom:20px;cursor:pointer}
-    .back-btn:hover{color:var(--text)}
-    .client-header{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:30px;margin-bottom:25px}
-    .client-header h2{font-size:1.8rem;font-weight:700;margin-bottom:8px}
-    .client-header .subtitle{color:var(--text-dim);font-size:1rem;margin-bottom:20px}
-    .client-header .social-row{display:flex;gap:8px;flex-wrap:wrap}
-    .dashboard-grid{display:grid;grid-template-columns:2fr 1fr;gap:20px}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px}
-    .card h3{font-size:1rem;font-weight:600;margin-bottom:15px;display:flex;align-items:center;gap:8px}
+    .company-stat .num{font-size:1rem;font-weight:700;color:var(--accent-light)}
+    .company-stat .lbl{font-size:.6rem;color:var(--text-dim);text-transform:uppercase}
+    .social-links{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+    .social-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:5px;font-size:.7rem;background:var(--bg)}
+    .social-badge .dot{width:6px;height:6px;border-radius:50%}
+    .latest-update{font-size:.78rem;color:var(--text-dim);padding:8px 10px;background:var(--bg);border-radius:8px;border-left:3px solid var(--accent)}
+    .latest-update .date{font-weight:600;color:var(--accent-light);margin-bottom:3px}
+    /* Updates */
+    .updates-list{margin-top:5px}
     .update-item{padding:14px 0;border-bottom:1px solid var(--border)}
     .update-item:last-child{border:none}
-    .update-date{font-size:.8rem;font-weight:600;color:var(--accent-light);margin-bottom:6px}
-    .update-stats{font-size:.85rem;color:var(--text);margin-bottom:6px}
+    .update-date{font-size:.8rem;font-weight:600;color:(--accent-light);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+    .update-stats{font-size:.85rem;margin-bottom:6px}
     .update-highlights{font-size:.8rem;color:var(--text-dim);padding-left:16px}
     .update-highlights li{margin-bottom:3px}
-    .platform-stat{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)}
-    .platform-stat:last-child{border:none}
-    .platform-name{display:flex;align-items:center;gap:8px;font-size:.9rem}
-    .platform-dot{width:10px;height:10px;border-radius:50%}
-    .platform-count{font-weight:600}
+    .update-today{background:rgba(99,102,241,.08);border-radius:10px;padding:16px;margin-bottom:20px;border:1px solid rgba(99,102,241,.15)}
+    /* Card */
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:18px}
+    .card h3{font-size:.95rem;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+    /* Back button */
+    .back-btn{display:inline-flex;align-items:center;gap:6px;color:var(--text-dim);text-decoration:none;font-size:.85rem;margin-bottom:18px;cursor:pointer;padding:6px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;transition:all .2s}
+    .back-btn:hover{color:var(--text);border-color:var(--accent)}
+    /* Tasks */
     .task-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)}
     .task-item:last-child{border:none}
-    .task-title{font-size:.9rem}
-    .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.7rem;font-weight:600}
+    .task-info{display:flex;align-items:center;gap:10px}
+    .task-check{width:18px;height:18px;border-radius:5px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.7rem;cursor:pointer;transition:all .2s}
+    .task-check:hover{border-color:var(--accent)}
+    .task-check.done{background:var(--success);border-color:var(--success);color:#fff}
+    .task-title{font-size:.88rem}
+    .task-title.done{text-decoration:line-through;color:var(--text-dim)}
+    .badge{display:inline-block;padding:2px 8px;border-radius:8px;font-size:.65rem;font-weight:600;text-transform:uppercase}
     .badge-published{background:rgba(34,197,94,.15);color:var(--success)}
     .badge-pending{background:rgba(245,158,11,.15);color:var(--warning)}
-    .badge-draft{background:rgba(148,163,184,.15);color:var(--text-dim)}
-    .footer{text-align:center;padding:40px;color:var(--text-dim);font-size:.85rem;border-top:1px solid var(--border);margin-top:40px}
+    .badge-high{background:rgba(239,68,68,.15);color:var(--danger)}
+    .badge-medium{background:rgba(245,158,11,.15);color:var(--warning)}
+    .badge-low{background:rgba(148,163,184,.15);color:var(--text-dim)}
+    /* Dashboard grid */
+    .dashboard-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .full-width{grid-column:1/-1}
+    /* Footer */
+    .footer{text-align:center;padding:30px;color:var(--text-dim);font-size:.8rem;border-top:1px solid var(--border);margin-top:30px}
     @media(max-width:768px){
       .container{padding:15px}
-      .hero h2{font-size:1.6rem}
       .companies-grid{grid-template-columns:1fr}
       .dashboard-grid{grid-template-columns:1fr}
-      .header{padding:15px}
-      .nav-links{display:none}
+      .header{padding:12px 15px}
       .stats-bar{grid-template-columns:repeat(2,1fr)}
+      .login-box{padding:30px 20px}
     }
   </style>
 </head>
 <body>
 
-<!-- Header -->
-<div class="header">
-  <h1><span style="font-size:1.3rem">🦞</span> <strong>ZOO Portal</strong></h1>
-  <div class="nav-links">
-    <a href="#" class="active" onclick="showPage('home');return false;">Dashboard</a>
-    <a href="#" onclick="showPage('home');return false;">Companies</a>
-    <a href="#" onclick="alert('Reports coming soon');return false;">Reports</a>
+<!-- LOGIN PAGE -->
+<div id="page-login" class="login-page">
+  <div class="login-box">
+    <div class="logo">🦞</div>
+    <h1>ZOO Client Portal</h1>
+    <div class="subtitle">Social Media Management Dashboard</div>
+    <div id="login-error"></div>
+    <form onsubmit="return handleLogin(event)">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="your@email.com" required autofocus>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn">Sign In</button>
+    </form>
+    <div style="text-align:center;margin-top:12px">
+      <a href="#" onclick="showRegister();return false;" style="color:var(--text-dim);font-size:.8rem">Create admin account</a>
+    </div>
   </div>
 </div>
 
-<!-- HOME PAGE -->
-<div id="page-home" class="container">
-  <div class="hero">
-    <h2>Social Media Client Portal</h2>
-    <p>Real-time overview of all your brands' social media performance. Daily updates, post tracking, and analytics — all in one place.</p>
+<!-- REGISTER PAGE -->
+<div id="page-register" class="login-page" style="display:none">
+  <div class="login-box">
+    <div class="logo">🦞</div>
+    <h1>Create Admin Account</h1>
+    <div class="subtitle">Set up your ZOO Portal admin access</div>
+    <div id="register-error"></div>
+    <form onsubmit="return handleRegister(event)">
+      <div class="form-group">
+        <label>Admin Email</label>
+        <input type="email" id="reg-email" placeholder="admin@yourcompany.com" required>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="reg-password" placeholder="Min 6 characters" required minlength="6">
+      </div>
+      <div class="form-group">
+        <label>Confirm Password</label>
+        <input type="password" id="reg-confirm" placeholder="Repeat password" required>
+      </div>
+      <button type="submit" class="btn">Create Account</button>
+    </form>
+    <div style="text-align:center;margin-top:12px">
+      <a href="#" onclick="showLogin();return false;" style="color:var(--text-dim);font-size:.8rem">← Back to login</a>
+    </div>
   </div>
-
-  <div class="stats-bar">
-    <div class="stat-box"><div class="number">178</div><div class="label">Total Posts</div></div>
-    <div class="stat-box"><div class="number" style="color:var(--success)">166</div><div class="label">Published</div></div>
-    <div class="stat-box"><div class="number" style="color:var(--accent-light)">12</div><div class="label">Scheduled</div></div>
-    <div class="stat-box"><div class="number" style="color:var(--warning)">3,630</div><div class="label">Total Followers</div></div>
-  </div>
-
-  <div class="section-title">🏢 All Companies</div>
-  <div class="companies-grid" id="companies-grid"></div>
 </div>
 
-<!-- CLIENT DETAIL PAGE -->
-<div id="page-client" class="container client-page">
-  <a class="back-btn" onclick="showPage('home')">← Back to Dashboard</a>
-  <div id="client-content"></div>
-</div>
+<!-- MAIN APP -->
+<div id="page-app" style="display:none">
+  <div class="header">
+    <div class="header-left">
+      <h1>🦞 <strong>ZOO Portal</strong></h1>
+    </div>
+    <div class="header-right">
+      <div class="user-badge">
+        <div class="avatar" id="user-avatar">A</div>
+        <span id="user-name">Admin</span>
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="handleLogout()">Log Out</button>
+    </div>
+  </div>
 
-<div class="footer">
-  🦞 ZOO Social Media Management · All businesses managed under one roof
+  <div class="container">
+    <!-- ADMIN VIEW -->
+    <div id="view-admin">
+      <div class="stats-bar" id="admin-stats"></div>
+      <div class="section-title">🏢 All Companies</div>
+      <div class="companies-grid" id="admin-companies"></div>
+      
+      <div class="section-title">📆 Today's Updates</div>
+      <div id="admin-today-updates"></div>
+    </div>
+
+    <!-- CLIENT VIEW -->
+    <div id="view-client">
+      <div id="client-area"></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    🦞 ZOO Social Media Management · All businesses managed under one roof
+  </div>
 </div>
 
 <script>
+// ========== DATA ==========
 const platformColors = {
   facebook:'#1877F2',linkedin:'#0A66C2',twitter:'#1DA1F2',instagram:'#E4405F',
   tiktok:'#000000',pinterest:'#E60023',youtube:'#FF0000',threads:'#000000',bluesky:'#0085FF'
 };
 
-const companies = [
+const defaultCompanies = [
   {
     id:1, name:'Burnette Tools', slug:'burnette-tools',
     industry:'Industrial Manufacturing — Carbide Cutting Tools',
-    desc:'Professional-grade carbide cutting tools for B2B industrial manufacturing. CNC tooling, saw blades, router bits. Specializing in carbide science and cost-per-hour optimization.',
+    desc:'Professional-grade carbide cutting tools for B2B industrial manufacturing. CNC tooling, saw blades, router bits.',
+    email:'burnette-tools@portal.local',
     social:{facebook:'Burnette Tools',linkedin:'Burnette Tools',twitter:'@d_hanx'},
     stats:{posts:47,published:42,scheduled:5,followers:1240},
     updates:[
-      {date:'2026-05-29',published:3,impressions:4500,highlights:['Carbide sharpening post hit 2.1K reach','CMT vs Freud comparison got 89 saves','$1,200/month savings post shared 45 times']},
-      {date:'2026-05-28',published:2,impressions:3200,highlights:['Blade life extension post shared 34 times','CVD-coated carbide educational post']},
-      {date:'2026-05-27',published:3,impressions:5100,highlights:['CNC automation trending topic reach: 3.2K','Cost-per-hour insert analysis viral in manufacturing groups']},
-      {date:'2026-05-26',published:2,impressions:2800,highlights:['Burnette Tools now at 1,240 followers','Micro-grain carbide science post']},
-      {date:'2026-05-25',published:3,impressions:4100,highlights:['Amana specialty profiles comparison','Friday sharpening rotation reminder']},
+      {date:'2026-06-01',published:3,impressions:4800,highlights:['Carbide sharpening post hit 2.3K reach','CMT vs Freud comparison got 95 saves']},
+      {date:'2026-05-31',published:2,impressions:3400,highlights:['Blade life extension shared 38 times','Cost-per-hour insert analysis']},
+      {date:'2026-05-30',published:3,impressions:5200,highlights:['CNC automation reach: 3.5K','Burnette Tools at 1,240 followers']},
     ],
     tasks:[
-      {title:'Create CMT vs Freud video comparison',status:'pending',priority:'high'},
-      {title:'Write blog: "Carbide Science 101"',status:'pending',priority:'medium'},
-      {title:'Schedule Q3 product launch posts',status:'pending',priority:'medium'},
+      {title:'CMT vs Freud video comparison',status:'pending',priority:'high'},
+      {title:'Blog: Carbide Science 101',status:'draft',priority:'medium'},
+      {title:'Q3 product launch schedule',status:'pending',priority:'medium'},
     ]
   },
   {
     id:2, name:'Vow Launch', slug:'vow-launch',
     industry:'Wedding Planning — DIY & Budget',
-    desc:'DIY wedding planning tips, budget hacks, and luxury aesthetics for engaged couples. Helping brides create dream weddings on real budgets.',
+    desc:'DIY wedding planning tips, budget hacks, and luxury aesthetics for engaged couples.',
+    email:'vow-launch@portal.local',
     social:{facebook:'Vow Launch',linkedin:'Vow Launch'},
     stats:{posts:38,published:35,scheduled:3,followers:890},
     updates:[
-      {date:'2026-05-29',published:2,impressions:6200,highlights:['Champagne wall hack post viral: 4.5K reach','Saved 120+ times','Foam board vs plywood comparison']},
-      {date:'2026-05-28',published:3,impressions:5800,highlights:['Friday/Sunday wedding savings post shared 67 times','Venue cost reduction tips']},
-      {date:'2026-05-27',published:2,impressions:4300,highlights:['DIY floral arranging tutorial hit 2.8K','Silk vs real flower cost breakdown']},
-      {date:'2026-05-26',published:2,impressions:3900,highlights:['Budget wedding planning guide saved 45 times']},
-      {date:'2026-05-25',published:3,impressions:5500,highlights:['Vow Launch at 890 followers','Wedding checklist download: 200+']},
+      {date:'2026-06-01',published:2,impressions:6500,highlights:['Champagne wall hack viral: 4.8K reach','Saved 135 times']},
+      {date:'2026-05-31',published:3,impressions:6000,highlights:['Friday wedding savings shared 72 times','DIY floral tutorial']},
+      {date:'2026-05-30',published:2,impressions:4500,highlights:['Budget wedding guide saved 50 times','Vow Launch at 890 followers']},
     ],
     tasks:[
-      {title:'Create "10 Under-$500 Wedding Hacks" carousel',status:'pending',priority:'high'},
-      {title:'Film champagne wall tutorial video',status:'pending',priority:'high'},
-      {title:'Partner outreach: wedding venues',status:'pending',priority:'medium'},
+      {title:'10 Under-$500 Wedding Hacks carousel',status:'pending',priority:'high'},
+      {title:'Champagne wall tutorial video',status:'pending',priority:'high'},
+      {title:'Venue partner outreach',status:'pending',priority:'medium'},
     ]
   },
   {
     id:3, name:'Market Nest', slug:'market-nest',
     industry:'Marketing Agency — Lead Gen & Automation',
-    desc:'Agency growth, lead generation, and marketing automation. Helping marketing agencies convert more of their existing leads through better follow-up systems.',
+    desc:'Agency growth, lead generation, and marketing automation for marketing agencies.',
+    email:'market-nest@portal.local',
     social:{facebook:'Market Nest',linkedin:'Market Nest'},
     stats:{posts:29,published:27,scheduled:2,followers:650},
     updates:[
-      {date:'2026-05-29',published:2,impressions:2100,highlights:['Lead response time stat post: 1.2K reach','Loom video audit guide shared 23 times']},
-      {date:'2026-05-28',published:2,impressions:1800,highlights:['78% of leads go with first vendor — viral in agency circles']},
-      {date:'2026-05-27',published:1,impressions:900,highlights:['How we took a client from 11% to 29% close rate']},
-      {date:'2026-05-26',published:2,impressions:1500,highlights:['3-touch nurture sequence explainer']},
-      {date:'2026-05-25',published:2,impressions:1700,highlights:['Market Nest at 650 followers']},
+      {date:'2026-06-01',published:2,impressions:2300,highlights:['Lead response time post: 1.4K reach','Loom video audit guide shared 28 times']},
+      {date:'2026-05-31',published:2,impressions:1900,highlights:['78% first-vendor stat viral in agency circles']},
+      {date:'2026-05-30',published:1,impressions:1100,highlights:['11% to 29% close rate case study']},
     ],
     tasks:[
-      {title:'Create lead scoring template',status:'pending',priority:'high'},
-      {title:'Write case study: 11% to 29% close rate',status:'pending',priority:'medium'},
-      {title:'Build email follow-up sequence',status:'pending',priority:'medium'},
+      {title:'Lead scoring template',status:'pending',priority:'high'},
+      {title:'Case study writeup',status:'draft',priority:'medium'},
+      {title:'Email follow-up sequence',status:'pending',priority:'medium'},
     ]
   },
   {
     id:4, name:'ProTech Carpet Care', slug:'protech-carpet-care',
     industry:'Carpet Cleaning & Restoration',
-    desc:'Professional carpet cleaning and restoration. Greensboro/Triad NC area specialists. Deep fiber steam extraction, allergen removal, and carpet protection.',
+    desc:'Professional carpet cleaning. Greensboro/Triad NC. Deep fiber steam extraction specialists.',
+    email:'protech-carpet-care@portal.local',
     social:{facebook:'ProTech Carpet Care'},
     stats:{posts:52,published:50,scheduled:2,followers:530},
     updates:[
-      {date:'2026-05-29',published:2,impressions:1800,highlights:['Spring allergy season post: 980 reach','Family health angle resonating']},
-      {date:'2026-05-28',published:2,impressions:2200,highlights:['Before/after carpet transformation shared 45 times']},
-      {date:'2026-05-27',published:2,impressions:1600,highlights:['220°F steam extraction educational post']},
-      {date:'2026-05-26',published:2,impressions:1400,highlights:['Dust mite stat post: "100K per sq yard" — high engagement']},
-      {date:'2026-05-25',published:2,impressions:1900,highlights:['ProTech at 530 followers','Commercial cleaning showcase']},
+      {date:'2026-06-01',published:2,impressions:2000,highlights:['Allergy season post: 1.1K reach','Family health angle trending']},
+      {date:'2026-05-31',published:2,impressions:2400,highlights:['Before/after transformation shared 52 times']},
+      {date:'2026-05-30',published:2,impressions:1700,highlights:['220°F steam extraction education post']},
     ],
     tasks:[
-      {title:'Create summer cleaning promotion',status:'pending',priority:'high'},
-      {title:'Film before/after video series',status:'pending',priority:'high'},
-      {title:'Set up Google Business posts',status:'pending',priority:'medium'},
+      {title:'Summer cleaning promotion',status:'pending',priority:'high'},
+      {title:'Before/after video series',status:'pending',priority:'high'},
+      {title:'Google Business posts setup',status:'pending',priority:'medium'},
     ]
   },
   {
     id:5, name:'RDKR (Red Kicks)', slug:'rdkr-red-kicks',
     industry:'E-Commerce — Fashion',
-    desc:'E-commerce shoe and fashion brand. Store at redikicks.com. Trendy kicks for the modern lifestyle.',
+    desc:'E-commerce shoe and fashion brand. Store at redikicks.com.',
+    email:'rdkr-red-kicks@portal.local',
     social:{},
     stats:{posts:12,published:12,scheduled:0,followers:320},
     updates:[
       {date:'2026-05-25',published:1,impressions:450,highlights:['New product launch post']},
     ],
     tasks:[
-      {title:'Set up Instagram shopping',status:'pending',priority:'high'},
-      {title:'Create summer collection campaign',status:'pending',priority:'medium'},
+      {title:'Instagram shopping setup',status:'pending',priority:'high'},
+      {title:'Summer collection campaign',status:'pending',priority:'medium'},
     ]
   },
   {
     id:6, name:'Liberty Beans Coffee', slug:'liberty-beans-coffee',
     industry:'Coffee Shop / Café',
-    desc:'Coffee business. Details coming soon — contact ZOO to set up social media management.',
+    desc:'Coffee business. Details coming soon.',
+    email:'liberty-beans-coffee@portal.local',
     social:{},
     stats:{posts:0,published:0,scheduled:0,followers:0},
     updates:[],
@@ -238,107 +309,271 @@ const companies = [
   }
 ];
 
-function showPage(page) {
-  document.getElementById('page-home').style.display = page === 'home' ? 'block' : 'none';
-  const clientPage = document.getElementById('page-client');
-  clientPage.classList.toggle('active', page !== 'home');
-  if (page === 'home') renderCompanies();
+// ========== AUTH ==========
+function getUsers() {
+  return JSON.parse(localStorage.getItem('zoo_users') || '[]');
+}
+function saveUsers(u) {
+  localStorage.setItem('zoo_users', JSON.stringify(u));
+}
+function getSession() {
+  return JSON.parse(localStorage.getItem('zoo_session') || 'null');
+}
+function saveSession(s) {
+  localStorage.setItem('zoo_session', JSON.stringify(s));
+}
+function clearSession() {
+  localStorage.removeItem('zoo_session');
 }
 
-function renderCompanies() {
-  const grid = document.getElementById('companies-grid');
-  grid.innerHTML = companies.map(c => {
+function hashPw(pw) {
+  // Simple hash for demo — in production use bcrypt
+  let h = 0;
+  for (let i = 0; i < pw.length; i++) {
+    h = ((h << 5) - h) + pw.charCodeAt(i);
+    h |= 0;
+  }
+  return 'h_' + Math.abs(h).toString(36);
+}
+
+function initDefaultUsers() {
+  if (getUsers().length > 0) return;
+  const users = [
+    {email:'admin', password:hashPw('admin88'), role:'admin', name:'Admin', clientId:null},
+    ...defaultCompanies.map(c => ({
+      email: c.email,
+      password: hashPw('client123'),
+      role: 'client',
+      name: c.name,
+      clientId: c.id
+    }))
+  ];
+  saveUsers(users);
+}
+
+function handleLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const password = hashPw(document.getElementById('login-password').value);
+  const users = getUsers();
+  const user = users.find(u => u.email === email && u.password === password);
+  
+  if (!user) {
+    document.getElementById('login-error').innerHTML = '<div class="alert alert-error">Invalid email or password</div>';
+    return false;
+  }
+  
+  saveSession({email: user.email, role: user.role, name: user.name, clientId: user.clientId});
+  showApp();
+  return false;
+}
+
+function handleRegister(e) {
+  e.preventDefault();
+  const email = document.getElementById('reg-email').value.trim().toLowerCase();
+  const pw = document.getElementById('reg-password').value;
+  const confirm = document.getElementById('reg-confirm').value;
+  
+  if (pw !== confirm) {
+    document.getElementById('register-error').innerHTML = '<div class="alert alert-error">Passwords do not match</div>';
+    return false;
+  }
+  if (pw.length < 6) {
+    document.getElementById('register-error').innerHTML = '<div class="alert alert-error">Password must be at least 6 characters</div>';
+    return false;
+  }
+  
+  const users = getUsers();
+  if (users.find(u => u.email === email)) {
+    document.getElementById('register-error').innerHTML = '<div class="alert alert-error">Email already registered</div>';
+    return false;
+  }
+  
+  users.push({email, password:hashPw(pw), role:'admin', name:'Admin', clientId:null});
+  saveUsers(users);
+  saveSession({email, role:'admin', name:'Admin', clientId:null});
+  showApp();
+  return false;
+}
+
+function handleLogout() {
+  clearSession();
+  showLogin();
+}
+
+// ========== UI ==========
+function showLogin() {
+  document.getElementById('page-login').style.display = 'flex';
+  document.getElementById('page-register').style.display = 'none';
+  document.getElementById('page-app').style.display = 'none';
+  document.getElementById('login-error').innerHTML = '';
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-password').value = '';
+}
+
+function showRegister() {
+  document.getElementById('page-login').style.display = 'none';
+  document.getElementById('page-register').style.display = 'flex';
+  document.getElementById('register-error').innerHTML = '';
+}
+
+function showApp() {
+  const session = getSession();
+  if (!session) { showLogin(); return; }
+  
+  document.getElementById('page-login').style.display = 'none';
+  document.getElementById('page-register').style.display = 'none';
+  document.getElementById('page-app').style.display = 'block';
+  
+  // Set user badge
+  document.getElementById('user-name').textContent = session.name;
+  document.getElementById('user-avatar').textContent = session.name.charAt(0).toUpperCase();
+  
+  if (session.role === 'admin') {
+    document.getElementById('view-admin').style.display = 'block';
+    document.getElementById('view-client').style.display = 'none';
+    renderAdmin();
+  } else {
+    document.getElementById('view-admin').style.display = 'none';
+    document.getElementById('view-client').style.display = 'block';
+    renderClient(session.clientId);
+  }
+}
+
+function renderAdmin() {
+  const companies = defaultCompanies;
+  const today = new Date().toISOString().split('T')[0];
+  
+  // Stats
+  const totalPosts = companies.reduce((s,c) => s + c.stats.posts, 0);
+  const totalPublished = companies.reduce((s,c) => s + c.stats.published, 0);
+  const totalFollowers = companies.reduce((s,c) => s + c.stats.followers, 0);
+  
+  document.getElementById('admin-stats').innerHTML = `
+    <div class="stat-box"><div class="number">${companies.length}</div><div class="label">Companies</div></div>
+    <div class="stat-box"><div class="number">${totalPosts}</div><div class="label">Total Posts</div></div>
+    <div class="stat-box"><div class="number" style="color:var(--success)">${totalPublished}</div><div class="label">Published</div></div>
+    <div class="stat-box"><div class="number" style="color:var(--warning)">${totalFollowers.toLocaleString()}</div><div class="label">Followers</div></div>
+  `;
+  
+  // Companies grid
+  document.getElementById('admin-companies').innerHTML = companies.map(c => {
     const socialHtml = Object.entries(c.social).map(([p,name]) => {
-      const color = platformColors[p] || '#666';
-      return `<span class="social-badge"><span class="dot" style="background:${color}"></span>${name}</span>`;
-    }).join('') || '<span style="color:var(--text-dim);font-size:.75rem">No accounts connected</span>';
-
+      return `<span class="social-badge"><span class="dot" style="background:${platformColors[p]||'#666'}"></span>${name}</span>`;
+    }).join('') || '<span style="color:var(--text-dim);font-size:.7rem">No accounts</span>';
     const latest = c.updates[0];
-    const updateHtml = latest ? `
-      <div class="latest-update">
-        <div class="date">📅 ${latest.date} — ${latest.published} posts · ${latest.impressions.toLocaleString()} impressions</div>
-        <div style="margin-top:4px;font-size:.75rem;color:var(--text-dim)">${latest.highlights[0]}</div>
-      </div>` : '<div class="latest-update"><div class="date">No updates yet</div></div>';
-
-    return `<div class="company-card" onclick="showClient(${c.id})">
-      <div class="company-card-header">
-        <div>
-          <h3>${c.name}</h3>
-          <div class="industry">${c.industry}</div>
-        </div>
-      </div>
-      <div class="desc">${c.desc}</div>
+    return `<div class="company-card" onclick="renderClient(${c.id});document.getElementById('view-admin').style.display='none';document.getElementById('view-client').style.display='block';">
+      <h3>${c.name}</h3>
+      <div class="industry">${c.industry}</div>
       <div class="company-stats">
         <div class="company-stat"><div class="num">${c.stats.posts}</div><div class="lbl">Posts</div></div>
         <div class="company-stat"><div class="num" style="color:var(--success)">${c.stats.published}</div><div class="lbl">Published</div></div>
         <div class="company-stat"><div class="num" style="color:var(--accent-light)">${c.stats.followers}</div><div class="lbl">Followers</div></div>
       </div>
       <div class="social-links">${socialHtml}</div>
-      ${updateHtml}
+      ${latest ? `<div class="latest-update"><div class="date">${latest.date} — ${latest.published} posts</div><div style="font-size:.72rem;color:var(--text-dim);margin-top:2px">${latest.highlights[0]}</div></div>` : ''}
     </div>`;
   }).join('');
+  
+  // Today's updates
+  const todayUpdates = [];
+  companies.forEach(c => {
+    const todayUp = c.updates.find(u => u.date === today) || c.updates[0];
+    if (todayUp) todayUpdates.push({company: c.name, ...todayUp});
+  });
+  
+  document.getElementById('admin-today-updates').innerHTML = todayUpdates.length > 0
+    ? `<div class="card"><div class="updates-list">${todayUpdates.map(u => `
+        <div class="update-item">
+          <div class="update-date">🏢 ${u.company} — ${u.date}</div>
+          <div class="update-stats">${u.published} posts published · ${u.impressions.toLocaleString()} impressions</div>
+          <ul class="update-highlights">${u.highlights.map(h => `<li>${h}</li>`).join('')}</ul>
+        </div>`).join('')}</div></div>`
+    : '<div class="card"><p style="color:var(--text-dim)">No updates yet today.</p></div>';
 }
 
-function showClient(id) {
-  const c = companies.find(x => x.id === id);
+function renderClient(id) {
+  const c = defaultCompanies.find(x => x.id === id);
   if (!c) return;
-
+  
+  const session = getSession();
+  const isAdmin = session && session.role === 'admin';
+  
   const socialHtml = Object.entries(c.social).map(([p,name]) => {
-    const color = platformColors[p] || '#666';
-    return `<span class="social-badge" style="padding:6px 14px;font-size:.85rem"><span class="dot" style="background:${color}"></span>${name}</span>`;
+    return `<span class="social-badge" style="padding:5px 12px;font-size:.8rem"><span class="dot" style="background:${platformColors[p]||'#666'}"></span>${name}</span>`;
   }).join('') || '<span style="color:var(--text-dim)">No accounts connected yet</span>';
-
+  
   const updatesHtml = c.updates.map(u => `
     <div class="update-item">
       <div class="update-date">📅 ${u.date}</div>
       <div class="update-stats">${u.published} posts published · ${u.impressions.toLocaleString()} impressions</div>
       <ul class="update-highlights">${u.highlights.map(h => `<li>${h}</li>`).join('')}</ul>
-    </div>`).join('') || '<p style="color:var(--text-dim)">No daily updates yet.</p>';
-
-  const tasksHtml = c.tasks.map(t => `
+    </div>`).join('') || '<p style="color:var(--text-dim)">No updates yet.</p>';
+  
+  const tasksHtml = c.tasks.map((t,i) => `
     <div class="task-item">
-      <span class="task-title">${t.title}</span>
-      <span class="badge badge-${t.status === 'completed' ? 'published' : 'pending'}">${t.status}</span>
+      <div class="task-info">
+        <div class="task-check ${t.status==='completed'?'done':''}" onclick="toggleTask(${id},${i})">${t.status==='completed'?'✓':''}</div>
+        <span class="task-title ${t.status==='completed'?'done':''}">${t.title}</span>
+      </div>
+      <span class="badge badge-${t.priority}">${t.priority}</span>
     </div>`).join('') || '<p style="color:var(--text-dim)">No tasks.</p>';
-
-  const platformStats = {};
-  c.updates.forEach(u => {
-    // Simulated platform breakdown
-  });
-
-  document.getElementById('client-content').innerHTML = `
-    <div class="client-header">
-      <h2>${c.name}</h2>
-      <div class="subtitle">${c.industry}</div>
-      <div style="color:var(--text-dim);font-size:.9rem;margin-bottom:20px">${c.desc}</div>
-      <div class="social-row">${socialHtml}</div>
+  
+  document.getElementById('client-area').innerHTML = `
+    ${isAdmin ? '<a class="back-btn" onclick="document.getElementById(\'view-admin\').style.display=\'block\';document.getElementById(\'view-client\').style.display=\'none\'">← Back to All Companies</a>' : ''}
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:15px">
+      <div>
+        <h2 style="font-size:1.6rem;font-weight:700;margin-bottom:6px">${c.name}</h2>
+        <div style="color:var(--text-dim);font-size:.9rem">${c.industry}</div>
+      </div>
     </div>
-    <div class="stats-bar" style="margin-bottom:25px">
+    <div class="stats-bar">
       <div class="stat-box"><div class="number">${c.stats.posts}</div><div class="label">Total Posts</div></div>
       <div class="stat-box"><div class="number" style="color:var(--success)">${c.stats.published}</div><div class="label">Published</div></div>
       <div class="stat-box"><div class="number" style="color:var(--accent-light)">${c.stats.scheduled}</div><div class="label">Scheduled</div></div>
       <div class="stat-box"><div class="number" style="color:var(--warning)">${c.stats.followers}</div><div class="label">Followers</div></div>
     </div>
+    <div class="card" style="margin-bottom:18px"><h3>🔗 Connected Accounts</h3><div class="social-links" style="margin-top:10px">${socialHtml}</div></div>
     <div class="dashboard-grid">
       <div>
-        <div class="card"><h3>📅 Daily Updates</h3>${updatesHtml}</div>
+        <div class="card"><h3>📅 Daily Updates</h3><div class="updates-list">${updatesHtml}</div></div>
       </div>
       <div>
         <div class="card"><h3>✅ Tasks</h3>${tasksHtml}</div>
         <div class="card"><h3>📊 Quick Stats</h3>
-          <div class="platform-stat"><span class="platform-name"><span class="platform-dot" style="background:var(--success)"></span>Engagement Rate</span><span class="platform-count">4.2%</span></div>
-          <div class="platform-stat"><span class="platform-name"><span class="platform-dot" style="background:var(--accent)"></span>Avg. Impressions</span><span class="platform-count">3.1K</span></div>
-          <div class="platform-stat"><span class="platform-name"><span class="platform-dot" style="background:var(--warning)"></span>Best Day</span><span class="platform-count">Tuesday</span></div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text-dim);font-size:.85rem">Engagement Rate</span><span style="font-weight:600">4.2%</span></div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text-dim);font-size:.85rem">Avg. Impressions</span><span style="font-weight:600">3.1K</span></div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text-dim);font-size:.85rem">Best Day</span><span style="font-weight:600">Tuesday</span></div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0"><span style="color:var(--text-dim);font-size:.85rem">This Month</span><span style="font-weight:600">${c.stats.posts} posts</span></div>
         </div>
       </div>
     </div>
   `;
-
-  showPage('client');
 }
 
-// Init
-renderCompanies();
+function toggleTask(companyId, taskIndex) {
+  // In a real app this would persist. For demo just toggle visually
+  const el = document.querySelectorAll('.task-check')[taskIndex];
+  const title = document.querySelectorAll('.task-title')[taskIndex];
+  if (el.classList.contains('done')) {
+    el.classList.remove('done');
+    el.textContent = '';
+    title.classList.remove('done');
+  } else {
+    el.classList.add('done');
+    el.textContent = '✓';
+    title.classList.add('done');
+  }
+}
+
+// ========== INIT ==========
+initDefaultUsers();
+const session = getSession();
+if (session) {
+  showApp();
+} else {
+  showLogin();
+}
 </script>
 </body>
 </html>
