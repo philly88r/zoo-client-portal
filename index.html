@@ -225,14 +225,15 @@
     <h2>📋 Request a Task</h2>
     <div class="subtitle">Submit a request and Phillip will be notified immediately.</div>
     <div id="request-error"></div>
-    <form onsubmit="return submitTaskRequest(event)">
+    <form name="task-request" id="task-request-form" netlify>
+      <input type="hidden" name="form-name" value="task-request">
       <div class="form-group">
         <label>Task Title</label>
-        <input type="text" id="req-title" placeholder="e.g. Create Instagram Reel for summer sale" required>
+        <input type="text" name="title" id="req-title" placeholder="e.g. Create Instagram Reel for summer sale" required>
       </div>
       <div class="form-group">
         <label>Priority</label>
-        <select id="req-priority">
+        <select name="priority" id="req-priority">
           <option value="high">🔴 High — Urgent</option>
           <option value="medium" selected>🟡 Medium — Normal</option>
           <option value="low">⚪ Low — When possible</option>
@@ -240,8 +241,10 @@
       </div>
       <div class="form-group">
         <label>Details (optional)</label>
-        <textarea id="req-details" placeholder="Any extra context, links, or instructions..."></textarea>
+        <textarea name="details" id="req-details" placeholder="Any extra context, links, or instructions..."></textarea>
       </div>
+      <input type="hidden" name="company" id="req-company">
+      <input type="hidden" name="from-email" id="req-from-email">
       <div class="modal-actions">
         <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('modal-request')">Cancel</button>
         <button type="submit" class="btn btn-primary btn-sm">📧 Send Request</button>
@@ -346,8 +349,7 @@
 
 <script>
 // ========== CONFIG ==========
-const WEB3FORMS_KEY = 'YOUR_WEB3FORMS_KEY'; // Replace with your free key from web3forms.com
-const ADMIN_EMAIL = 'pematthews41@gmail.com'; // Where task request emails go
+const ADMIN_EMAIL = 'pematthews41@gmail.com'; // For reference only — Netlify sends to your account email
 
 // ========== DATA ==========
 const platformColors = {
@@ -705,87 +707,81 @@ function toggleTask(companyId, taskIndex) {
 }
 
 // ========== MODAL ==========
-function openModal(id) { document.getElementById(id).classList.add('active'); }
+function openModal(id) {
+  // Pre-fill hidden fields when opening request modal
+  if (id === 'modal-request') {
+    const session = getSession();
+    const company = session ? (defaultCompanies.find(c => c.id === session.clientId) || {name:session.name}) : {name:'Unknown'};
+    document.getElementById('req-company').value = company.name;
+    document.getElementById('req-from-email').value = session?.email || '';
+  }
+  document.getElementById(id).classList.add('active');
+}
 function closeModal(id) { document.getElementById(id).classList.remove('active'); document.getElementById('request-error').innerHTML = ''; }
 
-function submitTaskRequest(e) {
-  e.preventDefault();
-  const title = document.getElementById('req-title').value.trim();
-  const priority = document.getElementById('req-priority').value;
-  const details = document.getElementById('req-details').value.trim();
-  const session = getSession();
-  const company = session ? (defaultCompanies.find(c => c.id === session.clientId) || {name:session.name}) : {name:'Unknown'};
-
-  if (!title) { document.getElementById('request-error').innerHTML = '<div class="alert alert-error">⚠️ Please enter a task title</div>'; return false; }
-
-  // Check if Web3Forms key is configured
-  if (!WEB3FORMS_KEY || WEB3FORMS_KEY === 'YOUR_WEB3FORMS_KEY') {
-    // Fallback to mailto if no key
-    const subject = encodeURIComponent(`[ZOO Portal] New Task Request from ${company.name}: ${title}`);
-    const body = encodeURIComponent(`NEW TASK REQUEST\n\nCompany: ${company.name}\nPriority: ${priority.toUpperCase()}\nTask: ${title}\n${details ? `\nDetails:\n${details}\n` : ''}\n---\nSubmitted via ZOO Client Portal`);
-    window.open(`mailto:${ADMIN_EMAIL}?subject=${subject}&body=${body}`, '_blank');
-  } else {
-    // Auto-send via Web3Forms
-    const btn = document.querySelector('#modal-request button[type="submit"]');
-    const origText = btn.innerHTML;
-    btn.innerHTML = '⏳ Sending...';
-    btn.disabled = true;
-
-    fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({
-        access_key: WEB3FORMS_KEY,
-        subject: `[ZOO Portal] ${company.name}: ${title}`,
-        from_name: 'ZOO Client Portal',
-        to_email: ADMIN_EMAIL,
-        company: company.name,
-        priority: priority.toUpperCase(),
-        task_title: title,
-        details: details || 'No additional details',
-        from_email: session?.email || '',
-        message: `NEW TASK REQUEST\n\nCompany: ${company.name}\nPriority: ${priority.toUpperCase()}\nTask: ${title}\n${details ? `\nDetails: ${details}` : ''}\n${session?.email ? `\nFrom: ${session.email}` : ''}`
-      })
-    })
-    .then(r => r.json())
-    .then(data => {
-      btn.innerHTML = origText;
-      btn.disabled = false;
-      if (data.success) {
-        closeModal('modal-request');
-        showToast('success', '📧 Task request sent! Phillip has been notified.');
-      } else {
-        document.getElementById('request-error').innerHTML = '<div class="alert alert-error">⚠️ Failed to send. Please try again.</div>';
+// ========== NETLIFY FORM SUBMIT ==========
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('task-request-form');
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const title = document.getElementById('req-title').value.trim();
+      if (!title) {
+        document.getElementById('request-error').innerHTML = '<div class="alert alert-error">⚠️ Please enter a task title</div>';
+        return;
       }
-    })
-    .catch(() => {
-      btn.innerHTML = origText;
-      btn.disabled = false;
-      document.getElementById('request-error').innerHTML = '<div class="alert alert-error">⚠️ Network error. Please try again.</div>';
+
+      const btn = form.querySelector('button[type="submit"]');
+      const origText = btn.innerHTML;
+      btn.innerHTML = '⏳ Sending...';
+      btn.disabled = true;
+
+      const formData = new FormData(form);
+
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(formData).toString()
+      })
+      .then(response => {
+        btn.innerHTML = origText;
+        btn.disabled = false;
+        if (response.ok) {
+          // Add task to local company list
+          const session = getSession();
+          if (session && session.clientId) {
+            const c = defaultCompanies.find(x => x.id === session.clientId);
+            if (c) c.tasks.push({title, status:'pending', priority: document.getElementById('req-priority').value});
+          }
+          // Save to localStorage
+          const requests = JSON.parse(localStorage.getItem('zoo_task_requests') || '[]');
+          requests.push({
+            title,
+            priority: document.getElementById('req-priority').value,
+            details: document.getElementById('req-details').value.trim(),
+            company: document.getElementById('req-company').value,
+            email: session?.email || '',
+            date: new Date().toISOString()
+          });
+          localStorage.setItem('zoo_task_requests', JSON.stringify(requests));
+
+          closeModal('modal-request');
+          form.reset();
+          showToast('success', '📧 Task request sent! Phillip has been notified.');
+          // Re-render if in client view
+          if (session && session.clientId) renderClient(session.clientId);
+        } else {
+          document.getElementById('request-error').innerHTML = '<div class="alert alert-error">⚠️ Failed to send. Please try again.</div>';
+        }
+      })
+      .catch(() => {
+        btn.innerHTML = origText;
+        btn.disabled = false;
+        document.getElementById('request-error').innerHTML = '<div class="alert alert-error">⚠️ Network error. Please try again.</div>';
+      });
     });
   }
-
-  // Also add to company tasks locally
-  if (session && session.clientId) {
-    const c = defaultCompanies.find(x => x.id === session.clientId);
-    if (c) c.tasks.push({title, status:'pending', priority});
-  }
-
-  // Save to localStorage
-  const requests = JSON.parse(localStorage.getItem('zoo_task_requests') || '[]');
-  requests.push({title, priority, details, company:company.name, email:session?.email||'', date:new Date().toISOString()});
-  localStorage.setItem('zoo_task_requests', JSON.stringify(requests));
-
-  // Close modal and show toast (if Web3Forms didn't already)
-  if (!WEB3FORMS_KEY || WEB3FORMS_KEY === 'YOUR_WEB3FORMS_KEY') {
-    closeModal('modal-request');
-    showToast('success', '📧 Email opened — send it to notify Phillip.');
-  }
-
-  // Re-render if in client view
-  if (session && session.clientId) renderClient(session.clientId);
-  return false;
-}
+});
 
 // ========== TOAST ==========
 function showToast(type, msg) {
