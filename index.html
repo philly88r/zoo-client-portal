@@ -362,7 +362,7 @@ function hashPw(pw) {
 function initDefaultUsers() {
   if (getUsers().length > 0) return;
   const users = [
-    {email:'admin', password:hashPw('admin88'), role:'admin', name:'Admin', clientId:null},
+    {email:'admin@zooportal.com', password:hashPw('admin88'), role:'admin', name:'Admin', clientId:null},
     ...defaultCompanies.map(c => ({
       email: c.email,
       password: hashPw('client123'),
