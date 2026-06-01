@@ -219,14 +219,25 @@
 
 <div class="toast-container" id="toast-container"></div>
 
+<!-- Static hidden form for Netlify Forms detection (do not remove) -->
+<form name="task-request" netlify netlify-honeypot="bot-field" hidden>
+  <input type="text" name="title">
+  <select name="priority"></select>
+  <textarea name="details"></textarea>
+  <input type="text" name="company">
+  <input type="email" name="from-email">
+  <input name="bot-field">
+</form>
+
 <!-- REQUEST TASK MODAL -->
 <div class="modal-overlay" id="modal-request">
   <div class="modal">
     <h2>📋 Request a Task</h2>
     <div class="subtitle">Submit a request and Phillip will be notified immediately.</div>
     <div id="request-error"></div>
-    <form name="task-request" id="task-request-form" netlify>
+    <form name="task-request" id="task-request-form" data-netlify="true" netlify-honeypot="bot-field">
       <input type="hidden" name="form-name" value="task-request">
+      <p class="hidden" style="display:none"><label>Don't fill this: <input name="bot-field"></label></p>
       <div class="form-group">
         <label>Task Title</label>
         <input type="text" name="title" id="req-title" placeholder="e.g. Create Instagram Reel for summer sale" required>
