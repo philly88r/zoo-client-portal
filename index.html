@@ -346,6 +346,7 @@
 
 <script>
 // ========== CONFIG ==========
+const WEB3FORMS_KEY = 'YOUR_WEB3FORMS_KEY'; // Replace with your free key from web3forms.com
 const ADMIN_EMAIL = 'pematthews41@gmail.com'; // Where task request emails go
 
 // ========== DATA ==========
@@ -717,37 +718,69 @@ function submitTaskRequest(e) {
 
   if (!title) { document.getElementById('request-error').innerHTML = '<div class="alert alert-error">⚠️ Please enter a task title</div>'; return false; }
 
-  // Compose email
-  const subject = encodeURIComponent(`[ZOO Portal] New Task Request from ${company.name}: ${title}`);
-  const body = encodeURIComponent(
-    `NEW TASK REQUEST\n\n` +
-    `Company: ${company.name}\n` +
-    `Priority: ${priority.toUpperCase()}\n` +
-    `Task: ${title}\n` +
-    `${details ? `\nDetails:\n${details}\n` : ''}` +
-    `\n---\nSubmitted via ZOO Client Portal`
-  );
+  // Check if Web3Forms key is configured
+  if (!WEB3FORMS_KEY || WEB3FORMS_KEY === 'YOUR_WEB3FORMS_KEY') {
+    // Fallback to mailto if no key
+    const subject = encodeURIComponent(`[ZOO Portal] New Task Request from ${company.name}: ${title}`);
+    const body = encodeURIComponent(`NEW TASK REQUEST\n\nCompany: ${company.name}\nPriority: ${priority.toUpperCase()}\nTask: ${title}\n${details ? `\nDetails:\n${details}\n` : ''}\n---\nSubmitted via ZOO Client Portal`);
+    window.open(`mailto:${ADMIN_EMAIL}?subject=${subject}&body=${body}`, '_blank');
+  } else {
+    // Auto-send via Web3Forms
+    const btn = document.querySelector('#modal-request button[type="submit"]');
+    const origText = btn.innerHTML;
+    btn.innerHTML = '⏳ Sending...';
+    btn.disabled = true;
 
-  // Open mailto
-  window.open(`mailto:${ADMIN_EMAIL}?subject=${subject}&body=${body}`, '_blank');
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        access_key: WEB3FORMS_KEY,
+        subject: `[ZOO Portal] ${company.name}: ${title}`,
+        from_name: 'ZOO Client Portal',
+        to_email: ADMIN_EMAIL,
+        company: company.name,
+        priority: priority.toUpperCase(),
+        task_title: title,
+        details: details || 'No additional details',
+        from_email: session?.email || '',
+        message: `NEW TASK REQUEST\n\nCompany: ${company.name}\nPriority: ${priority.toUpperCase()}\nTask: ${title}\n${details ? `\nDetails: ${details}` : ''}\n${session?.email ? `\nFrom: ${session.email}` : ''}`
+      })
+    })
+    .then(r => r.json())
+    .then(data => {
+      btn.innerHTML = origText;
+      btn.disabled = false;
+      if (data.success) {
+        closeModal('modal-request');
+        showToast('success', '📧 Task request sent! Phillip has been notified.');
+      } else {
+        document.getElementById('request-error').innerHTML = '<div class="alert alert-error">⚠️ Failed to send. Please try again.</div>';
+      }
+    })
+    .catch(() => {
+      btn.innerHTML = origText;
+      btn.disabled = false;
+      document.getElementById('request-error').innerHTML = '<div class="alert alert-error">⚠️ Network error. Please try again.</div>';
+    });
+  }
 
   // Also add to company tasks locally
   if (session && session.clientId) {
     const c = defaultCompanies.find(x => x.id === session.clientId);
-    if (c) {
-      c.tasks.push({title, status:'pending', priority});
-    }
+    if (c) c.tasks.push({title, status:'pending', priority});
   }
 
-  // Also save to localStorage for persistence
+  // Save to localStorage
   const requests = JSON.parse(localStorage.getItem('zoo_task_requests') || '[]');
   requests.push({title, priority, details, company:company.name, email:session?.email||'', date:new Date().toISOString()});
   localStorage.setItem('zoo_task_requests', JSON.stringify(requests));
 
-  closeModal('modal-request');
-  document.getElementById('req-title').value = '';
-  document.getElementById('req-details').value = '';
-  showToast('success', '📧 Task request sent! Phillip has been notified.');
+  // Close modal and show toast (if Web3Forms didn't already)
+  if (!WEB3FORMS_KEY || WEB3FORMS_KEY === 'YOUR_WEB3FORMS_KEY') {
+    closeModal('modal-request');
+    showToast('success', '📧 Email opened — send it to notify Phillip.');
+  }
 
   // Re-render if in client view
   if (session && session.clientId) renderClient(session.clientId);
