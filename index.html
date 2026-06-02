@@ -1,503 +1,381 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Market Nest Client Portal</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #06060b;
-      --bg-raised: #0d0d14;
-      --card: #111118;
-      --card-hover: #16161f;
-      --border: #1e1e2e;
-      --border-light: #2a2a3a;
-      --accent: #00FFB9;
-      --accent-light: #33FFCC;
-      --accent-glow: rgba(0,255,185,.15);
-      --accent-gradient: linear-gradient(135deg, #00CC95 0%, #00FFB9 50%, #33FFCC 100%);
-      --text: #f1f5f9;
-      --text-secondary: #94a3b8;
-      --text-dim: #64748b;
-      --success: #10b981;
-      --success-bg: rgba(16,185,129,.1);
-      --warning: #f59e0b;
-      --warning-bg: rgba(245,158,11,.1);
-      --danger: #ef4444;
-      --danger-bg: rgba(239,68,68,.1);
-      --info: #3b82f6;
-      --info-bg: rgba(59,130,246,.1);
-      --radius: 16px;
-      --radius-sm: 10px;
-      --shadow: 0 4px 24px rgba(0,0,0,.4);
-      --shadow-lg: 0 8px 40px rgba(0,0,0,.5);
-      --glow: 0 0 40px rgba(0,255,185,.08);
-    }
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; -webkit-font-smoothing:antialiased; }
-    a { color:var(--accent-light); text-decoration:none; }
-    a:hover { color:var(--text); }
-
-    /* ===== ANIMATIONS ===== */
-    @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-    @keyframes shimmer { 0% { background-position:-200% 0; } 100% { background-position:200% 0; } }
-    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.5; } }
-    @keyframes slideDown { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
-    .fade-up { animation: fadeUp .5s ease both; }
-    .fade-up-1 { animation-delay:.1s; }
-    .fade-up-2 { animation-delay:.2s; }
-    .fade-up-3 { animation-delay:.3s; }
-
-    /* ===== LOGIN ===== */
-    .login-page { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; background:radial-gradient(ellipse at 50% 0%, rgba(0,255,185,.08) 0%, transparent 60%); }
-    .login-box { background:var(--card); border:1px solid var(--border); border-radius:24px; padding:48px; max-width:440px; width:100%; box-shadow:var(--shadow-lg), var(--glow); animation: fadeUp .6s ease both; }
-    .login-logo { text-align:center; margin-bottom:24px; }
-    .login-logo .icon { width:64px; height:64px; border-radius:20px; background:var(--accent-gradient); display:inline-flex; align-items:center; justify-content:center; font-size:28px; margin-bottom:16px; box-shadow:0 8px 32px rgba(0,255,185,.3); }
-    .login-box h1 { text-align:center; font-size:1.5rem; font-weight:800; letter-spacing:-.02em; margin-bottom:6px; }
-    .login-box .subtitle { text-align:center; color:var(--text-dim); font-size:.9rem; margin-bottom:32px; }
-    .form-group { margin-bottom:18px; }
-    .form-group label { display:block; font-size:.75rem; font-weight:600; margin-bottom:8px; color:var(--text-secondary); text-transform:uppercase; letter-spacing:.8px; }
-    .form-group input, .form-group textarea, .form-group select { width:100%; padding:14px 16px; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-size:.95rem; font-family:inherit; outline:none; transition:all .2s; }
-    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
-    .form-group textarea { resize:vertical; min-height:100px; }
-
-    /* ===== BUTTONS ===== */
-    .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:14px 28px; border:none; border-radius:var(--radius-sm); font-size:.95rem; font-weight:600; font-family:inherit; cursor:pointer; transition:all .2s; }
-    .btn-primary { background:var(--accent-gradient); color:#000; box-shadow:0 4px 16px rgba(0,255,185,.3); }
-    .btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,255,185,.4); }
-    .btn-ghost { background:transparent; color:var(--text-secondary); border:1px solid var(--border); }
-    .btn-ghost:hover { color:var(--text); border-color:var(--accent); background:var(--accent-glow); }
-    .btn-sm { padding:10px 18px; font-size:.85rem; }
-    .btn-xs { padding:6px 14px; font-size:.78rem; }
-    .btn-full { width:100%; }
-    .btn-success { background:var(--success); color:#fff; }
-    .btn-danger { background:var(--danger); color:#fff; }
-    .btn-icon { width:40px; height:40px; padding:0; border-radius:10px; display:flex; align-items:center; justify-content:center; }
-
-    /* ===== ALERTS ===== */
-    .alert { padding:14px 18px; border-radius:var(--radius-sm); margin-bottom:18px; font-size:.9rem; display:flex; align-items:center; gap:10px; animation:slideDown .3s ease; }
-    .alert-error { background:var(--danger-bg); color:var(--danger); border:1px solid rgba(239,68,68,.2); }
-    .alert-success { background:var(--success-bg); color:var(--success); border:1px solid rgba(16,185,129,.2); }
-
-    /* ===== HEADER ===== */
-    .header { background:rgba(17,17,24,.85); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:0 32px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; height:64px; }
-    .header-left { display:flex; align-items:center; gap:12px; }
-    .header-logo { width:36px; height:36px; border-radius:10px; background:var(--accent-gradient); display:flex; align-items:center; justify-content:center; font-size:16px; }
-    .header h1 { font-size:1rem; font-weight:700; letter-spacing:-.01em; }
-    .header h1 span { color:var(--text-dim); font-weight:400; margin-left:6px; font-size:.85rem; }
-    .header-right { display:flex; gap:10px; align-items:center; }
-    .user-pill { display:flex; align-items:center; gap:10px; padding:6px 14px 6px 6px; background:var(--bg-raised); border:1px solid var(--border); border-radius:40px; font-size:.85rem; }
-    .user-pill .avatar { width:32px; height:32px; border-radius:50%; background:var(--accent-gradient); display:flex; align-items:center; justify-content:center; font-size:.8rem; font-weight:700; color:#fff; }
-
-    /* ===== LAYOUT ===== */
-    .container { max-width:1280px; margin:0 auto; padding:32px; }
-    .page { display:none; }
-    .page.active { display:block; }
-
-    /* ===== STATS ===== */
-    .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-bottom:32px; }
-    .stat-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:24px; position:relative; overflow:hidden; transition:all .25s; }
-    .stat-card:hover { border-color:var(--border-light); transform:translateY(-2px); box-shadow:var(--shadow); }
-    .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--accent-gradient); opacity:0; transition:opacity .25s; }
-    .stat-card:hover::before { opacity:1; }
-    .stat-icon { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; margin-bottom:14px; }
-    .stat-number { font-size:2rem; font-weight:800; letter-spacing:-.03em; line-height:1; }
-    .stat-label { font-size:.75rem; color:var(--text-dim); margin-top:6px; text-transform:uppercase; letter-spacing:.8px; font-weight:500; }
-    .stat-change { font-size:.78rem; margin-top:8px; font-weight:600; }
-    .stat-change.up { color:var(--success); }
-    .stat-change.down { color:var(--danger); }
-
-    /* ===== CARDS ===== */
-    .card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:24px; margin-bottom:20px; transition:border-color .2s; }
-    .card:hover { border-color:var(--border-light); }
-    .card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
-    .card-header h3 { font-size:1rem; font-weight:700; display:flex; align-items:center; gap:8px; }
-    .card-header .badge { font-size:.7rem; }
-
-    /* ===== COMPANY CARDS ===== */
-    .companies-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:20px; margin-bottom:32px; }
-    .company-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:24px; cursor:pointer; transition:all .3s; position:relative; overflow:hidden; }
-    .company-card::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; background:var(--accent-gradient); opacity:0; transition:opacity .3s; }
-    .company-card:hover { border-color:var(--accent); transform:translateY(-4px); box-shadow:var(--shadow), var(--glow); }
-    .company-card:hover::before { opacity:1; }
-    .company-card .name { font-size:1.1rem; font-weight:700; margin-bottom:4px; }
-    .company-card .industry { font-size:.78rem; color:var(--accent-light); font-weight:500; margin-bottom:14px; }
-    .company-card .desc { font-size:.82rem; color:var(--text-dim); line-height:1.6; margin-bottom:16px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-    .company-stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px; }
-    .company-stat { text-align:center; padding:10px 8px; background:var(--bg); border-radius:var(--radius-sm); }
-    .company-stat .num { font-size:1.1rem; font-weight:700; }
-    .company-stat .lbl { font-size:.65rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:.5px; margin-top:2px; }
-    .company-latest { font-size:.78rem; color:var(--text-dim); padding:10px 14px; background:var(--bg); border-radius:var(--radius-sm); border-left:3px solid var(--accent); line-height:1.5; }
-    .company-latest .date { font-weight:600; color:var(--accent-light); font-size:.72rem; margin-bottom:4px; }
-
-    /* ===== SOCIAL BADGES ===== */
-    .social-links { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
-    .social-badge { display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:6px; font-size:.72rem; background:var(--bg); border:1px solid var(--border); font-weight:500; }
-    .social-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
-
-    /* ===== UPDATES ===== */
-    .update-item { padding:16px 0; border-bottom:1px solid var(--border); }
-    .update-item:last-child { border:none; }
-    .update-date { font-size:.82rem; font-weight:600; color:var(--accent-light); margin-bottom:8px; display:flex; align-items:center; gap:8px; }
-    .update-stats { font-size:.85rem; margin-bottom:8px; color:var(--text-secondary); }
-    .update-highlights { font-size:.82rem; color:var(--text-dim); padding-left:18px; line-height:1.8; }
-    .update-highlights li { margin-bottom:2px; }
-    .update-today { background:var(--accent-glow); border-radius:var(--radius); padding:18px; margin-bottom:20px; border:1px solid rgba(0,255,185,.15); }
-
-    /* ===== TASKS ===== */
-    .task-item { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border); }
-    .task-item:last-child { border:none; }
-    .task-info { display:flex; align-items:center; gap:12px; flex:1; min-width:0; }
-    .task-check { width:22px; height:22px; border-radius:6px; border:2px solid var(--border-light); display:flex; align-items:center; justify-content:center; font-size:.7rem; cursor:pointer; transition:all .2s; flex-shrink:0; }
-    .task-check:hover { border-color:var(--accent); }
-    .task-check.done { background:var(--success); border-color:var(--success); color:#fff; }
-    .task-title { font-size:.88rem; }
-    .task-title.done { text-decoration:line-through; color:var(--text-dim); }
-
-    /* ===== BADGES ===== */
-    .badge { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:6px; font-size:.68rem; font-weight:600; text-transform:uppercase; letter-spacing:.5px; }
-    .badge-published { background:var(--success-bg); color:var(--success); }
-    .badge-pending { background:var(--warning-bg); color:var(--warning); }
-    .badge-completed { background:var(--success-bg); color:var(--success); }
-    .badge-high { background:var(--danger-bg); color:var(--danger); }
-    .badge-medium { background:var(--warning-bg); color:var(--warning); }
-    .badge-low { background:rgba(100,116,139,.15); color:var(--text-dim); }
-    .badge-info { background:var(--info-bg); color:var(--info); }
-
-    /* ===== DASHBOARD GRID ===== */
-    .dashboard-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-    .full-width { grid-column:1/-1; }
-
-    /* ===== BACK BUTTON ===== */
-    .back-btn { display:inline-flex; align-items:center; gap:8px; color:var(--text-dim); font-size:.85rem; margin-bottom:20px; cursor:pointer; padding:8px 16px; background:var(--card); border:1px solid var(--border); border-radius:var(--radius-sm); transition:all .2s; }
-    .back-btn:hover { color:var(--text); border-color:var(--accent); background:var(--accent-glow); }
-
-    /* ===== SECTION TITLE ===== */
-    .section-title { font-size:1.15rem; font-weight:700; margin-bottom:18px; display:flex; align-items:center; gap:10px; }
-    .section-title .count { font-size:.75rem; color:var(--text-dim); font-weight:500; background:var(--bg); padding:2px 10px; border-radius:20px; }
-
-    /* ===== QUICK STATS ===== */
-    .quick-stat-row { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border); }
-    .quick-stat-row:last-child { border:none; }
-    .quick-stat-label { color:var(--text-dim); font-size:.85rem; }
-    .quick-stat-value { font-weight:700; font-size:.9rem; }
-
-    /* ===== TASK REQUEST MODAL ===== */
-    .modal-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.7); backdrop-filter:blur(8px); z-index:1000; align-items:center; justify-content:center; padding:20px; }
-    .modal-overlay.active { display:flex; }
-    .modal { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:32px; max-width:520px; width:100%; box-shadow:var(--shadow-lg); animation:fadeUp .3s ease; }
-    .modal h2 { font-size:1.2rem; font-weight:700; margin-bottom:6px; }
-    .modal .subtitle { color:var(--text-dim); font-size:.85rem; margin-bottom:24px; }
-    .modal-actions { display:flex; gap:10px; margin-top:24px; justify-content:flex-end; }
-
-    /* ===== TOAST ===== */
-    .toast-container { position:fixed; top:80px; right:24px; z-index:2000; display:flex; flex-direction:column; gap:10px; }
-    .toast { background:var(--card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px 20px; box-shadow:var(--shadow); display:flex; align-items:center; gap:10px; font-size:.9rem; animation:slideDown .3s ease; min-width:280px; }
-    .toast.success { border-left:3px solid var(--success); }
-    .toast.error { border-left:3px solid var(--danger); }
-
-    /* ===== FOOTER ===== */
-    .footer { text-align:center; padding:32px; color:var(--text-dim); font-size:.8rem; border-top:1px solid var(--border); margin-top:40px; }
-    .footer a { color:var(--accent-light); }
-
-    /* ===== RESPONSIVE ===== */
-    @media(max-width:768px) {
-      .container { padding:16px; }
-      .companies-grid { grid-template-columns:1fr; }
-      .dashboard-grid { grid-template-columns:1fr; }
-      .header { padding:0 16px; }
-      .stats-grid { grid-template-columns:repeat(2,1fr); }
-      .login-box { padding:28px 20px; }
-      .modal { padding:24px; }
-    }
-  </style>
-</head>
-<body>
-
-<div class="toast-container" id="toast-container"></div>
-
-<!-- Static hidden form for Netlify Forms detection (do not remove) -->
-<form name="task-request" netlify netlify-honeypot="bot-field" hidden>
-  <input type="text" name="title">
-  <select name="priority"></select>
-  <textarea name="details"></textarea>
-  <input type="text" name="company">
-  <input type="email" name="from-email">
-  <input name="bot-field">
-</form>
-
-<!-- REQUEST TASK MODAL -->
-<div class="modal-overlay" id="modal-request">
-  <div class="modal">
-    <h2>📋 Request a Task</h2>
-    <div class="subtitle">Submit a request and Phillip will be notified immediately.</div>
-    <div id="request-error"></div>
-    <form name="task-request" id="task-request-form" data-netlify="true" netlify-honeypot="bot-field">
-      <input type="hidden" name="form-name" value="task-request">
-      <p class="hidden" style="display:none"><label>Don't fill this: <input name="bot-field"></label></p>
-      <div class="form-group">
-        <label>Task Title</label>
-        <input type="text" name="title" id="req-title" placeholder="e.g. Create Instagram Reel for summer sale" required>
-      </div>
-      <div class="form-group">
-        <label>Priority</label>
-        <select name="priority" id="req-priority">
-          <option value="high">🔴 High — Urgent</option>
-          <option value="medium" selected>🟡 Medium — Normal</option>
-          <option value="low">⚪ Low — When possible</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Details (optional)</label>
-        <textarea name="details" id="req-details" placeholder="Any extra context, links, or instructions..."></textarea>
-      </div>
-      <input type="hidden" name="company" id="req-company">
-      <input type="hidden" name="from-email" id="req-from-email">
-      <div class="modal-actions">
-        <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('modal-request')">Cancel</button>
-        <button type="submit" class="btn btn-primary btn-sm">📧 Send Request</button>
-      </div>
-    </form>
-  </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Market Nest Client Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #06060b;
+      --bg-raised: #0d0d14;
+      --card: #111118;
+      --card-hover: #16161f;
+      --border: #1e1e2e;
+      --border-light: #2a2a3a;
+      --accent: #00FFB9;
+      --accent-light: #33FFCC;
+      --accent-glow: rgba(0,255,185,.15);
+      --accent-gradient: linear-gradient(135deg, #00CC95 0%, #00FFB9 50%, #33FFCC 100%);
+      --text: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-dim: #64748b;
+      --success: #10b981;
+      --success-bg: rgba(16,185,129,.1);
+      --warning: #f59e0b;
+      --warning-bg: rgba(245,158,11,.1);
+      --danger: #ef4444;
+      --danger-bg: rgba(239,68,68,.1);
+      --info: #3b82f6;
+      --info-bg: rgba(59,130,246,.1);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --shadow: 0 4px 24px rgba(0,0,0,.4);
+      --shadow-lg: 0 8px 40px rgba(0,0,0,.5);
+      --glow: 0 0 40px rgba(0,255,185,.08);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; -webkit-font-smoothing:antialiased; }
+    a { color:var(--accent-light); text-decoration:none; }
+    a:hover { color:var(--text); }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+    @keyframes shimmer { 0% { background-position:-200% 0; } 100% { background-position:200% 0; } }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.5; } }
+    @keyframes slideDown { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
+    .fade-up { animation: fadeUp .5s ease both; }
+    .fade-up-1 { animation-delay:.1s; }
+    .fade-up-2 { animation-delay:.2s; }
+    .fade-up-3 { animation-delay:.3s; }
+
+    /* ===== LOGIN ===== */
+    .login-page { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; background:radial-gradient(ellipse at 50% 0%, rgba(0,255,185,.08) 0%, transparent 60%); }
+    .login-box { background:var(--card); border:1px solid var(--border); border-radius:24px; padding:48px; max-width:440px; width:100%; box-shadow:var(--shadow-lg), var(--glow); animation: fadeUp .6s ease both; }
+    .login-logo { text-align:center; margin-bottom:24px; }
+    .login-logo .icon { width:64px; height:64px; border-radius:20px; background:var(--accent-gradient); display:inline-flex; align-items:center; justify-content:center; font-size:28px; margin-bottom:16px; box-shadow:0 8px 32px rgba(0,255,185,.3); }
+    .login-box h1 { text-align:center; font-size:1.5rem; font-weight:800; letter-spacing:-.02em; margin-bottom:6px; }
+    .login-box .subtitle { text-align:center; color:var(--text-dim); font-size:.9rem; margin-bottom:32px; }
+    .form-group { margin-bottom:18px; }
+    .form-group label { display:block; font-size:.75rem; font-weight:600; margin-bottom:8px; color:var(--text-secondary); text-transform:uppercase; letter-spacing:.8px; }
+    .form-group input, .form-group textarea, .form-group select { width:100%; padding:14px 16px; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-size:.95rem; font-family:inherit; outline:none; transition:all .2s; }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
+    .form-group textarea { resize:vertical; min-height:100px; }
+
+    /* ===== BUTTONS ===== */
+    .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:14px 28px; border:none; border-radius:var(--radius-sm); font-size:.95rem; font-weight:600; font-family:inherit; cursor:pointer; transition:all .2s; }
+    .btn-primary { background:var(--accent-gradient); color:#000; box-shadow:0 4px 16px rgba(0,255,185,.3); }
+    .btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,255,185,.4); }
+    .btn-ghost { background:transparent; color:var(--text-secondary); border:1px solid var(--border); }
+    .btn-ghost:hover { color:var(--text); border-color:var(--accent); background:var(--accent-glow); }
+    .btn-sm { padding:10px 18px; font-size:.85rem; }
+    .btn-xs { padding:6px 14px; font-size:.78rem; }
+    .btn-full { width:100%; }
+    .btn-success { background:var(--success); color:#fff; }
+    .btn-danger { background:var(--danger); color:#fff; }
+    .btn-icon { width:40px; height:40px; padding:0; border-radius:10px; display:flex; align-items:center; justify-content:center; }
+
+    /* ===== ALERTS ===== */
+    .alert { padding:14px 18px; border-radius:var(--radius-sm); margin-bottom:18px; font-size:.9rem; display:flex; align-items:center; gap:10px; animation:slideDown .3s ease; }
+    .alert-error { background:var(--danger-bg); color:var(--danger); border:1px solid rgba(239,68,68,.2); }
+    .alert-success { background:var(--success-bg); color:var(--success); border:1px solid rgba(16,185,129,.2); }
+
+    /* ===== HEADER ===== */
+    .header { background:rgba(17,17,24,.85); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:0 32px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; height:64px; }
+    .header-left { display:flex; align-items:center; gap:12px; }
+    .header-logo { width:36px; height:36px; border-radius:10px; background:var(--accent-gradient); display:flex; align-items:center; justify-content:center; font-size:16px; }
+    .header h1 { font-size:1rem; font-weight:700; letter-spacing:-.01em; }
+    .header h1 span { color:var(--text-dim); font-weight:400; margin-left:6px; font-size:.85rem; }
+    .header-right { display:flex; gap:10px; align-items:center; }
+    .user-pill { display:flex; align-items:center; gap:10px; padding:6px 14px 6px 6px; background:var(--bg-raised); border:1px solid var(--border); border-radius:40px; font-size:.85rem; }
+    .user-pill .avatar { width:32px; height:32px; border-radius:50%; background:var(--accent-gradient); display:flex; align-items:center; justify-content:center; font-size:.8rem; font-weight:700; color:#fff; }
+
+    /* ===== LAYOUT ===== */
+    .container { max-width:1280px; margin:0 auto; padding:32px; }
+    .page { display:none; }
+    .page.active { display:block; }
+
+    /* ===== STATS ===== */
+    .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-bottom:32px; }
+    .stat-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:24px; position:relative; overflow:hidden; transition:all .25s; }
+    .stat-card:hover { border-color:var(--border-light); transform:translateY(-2px); box-shadow:var(--shadow); }
+    .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--accent-gradient); opacity:0; transition:opacity .25s; }
+    .stat-card:hover::before { opacity:1; }
+    .stat-icon { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; margin-bottom:14px; }
+    .stat-number { font-size:2rem; font-weight:800; letter-spacing:-.03em; line-height:1; }
+    .stat-label { font-size:.75rem; color:var(--text-dim); margin-top:6px; text-transform:uppercase; letter-spacing:.8px; font-weight:500; }
+    .stat-change { font-size:.78rem; margin-top:8px; font-weight:600; }
+    .stat-change.up { color:var(--success); }
+    .stat-change.down { color:var(--danger); }
+
+    /* ===== CARDS ===== */
+    .card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:24px; margin-bottom:20px; transition:border-color .2s; }
+    .card:hover { border-color:var(--border-light); }
+    .card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+    .card-header h3 { font-size:1rem; font-weight:700; display:flex; align-items:center; gap:8px; }
+    .card-header .badge { font-size:.7rem; }
+
+    /* ===== COMPANY CARDS ===== */
+    .companies-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:20px; margin-bottom:32px; }
+    .company-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:24px; cursor:pointer; transition:all .3s; position:relative; overflow:hidden; }
+    .company-card::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; background:var(--accent-gradient); opacity:0; transition:opacity .3s; }
+    .company-card:hover { border-color:var(--accent); transform:translateY(-4px); box-shadow:var(--shadow), var(--glow); }
+    .company-card:hover::before { opacity:1; }
+    .company-card .name { font-size:1.1rem; font-weight:700; margin-bottom:4px; }
+    .company-card .industry { font-size:.78rem; color:var(--accent-light); font-weight:500; margin-bottom:14px; }
+    .company-card .desc { font-size:.82rem; color:var(--text-dim); line-height:1.6; margin-bottom:16px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .company-stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px; }
+    .company-stat { text-align:center; padding:10px 8px; background:var(--bg); border-radius:var(--radius-sm); }
+    .company-stat .num { font-size:1.1rem; font-weight:700; }
+    .company-stat .lbl { font-size:.65rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:.5px; margin-top:2px; }
+    .company-latest { font-size:.78rem; color:var(--text-dim); padding:10px 14px; background:var(--bg); border-radius:var(--radius-sm); border-left:3px solid var(--accent); line-height:1.5; }
+    .company-latest .date { font-weight:600; color:var(--accent-light); font-size:.72rem; margin-bottom:4px; }
+
+    /* ===== SOCIAL BADGES ===== */
+    .social-links { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+    .social-badge { display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:6px; font-size:.72rem; background:var(--bg); border:1px solid var(--border); font-weight:500; }
+    .social-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+
+    /* ===== UPDATES ===== */
+    .update-item { padding:16px 0; border-bottom:1px solid var(--border); }
+    .update-item:last-child { border:none; }
+    .update-date { font-size:.82rem; font-weight:600; color:var(--accent-light); margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+    .update-stats { font-size:.85rem; margin-bottom:8px; color:var(--text-secondary); }
+    .update-highlights { font-size:.82rem; color:var(--text-dim); padding-left:18px; line-height:1.8; }
+    .update-highlights li { margin-bottom:2px; }
+    .update-today { background:var(--accent-glow); border-radius:var(--radius); padding:18px; margin-bottom:20px; border:1px solid rgba(0,255,185,.15); }
+
+    /* ===== TASKS ===== */
+    .task-item { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border); }
+    .task-item:last-child { border:none; }
+    .task-info { display:flex; align-items:center; gap:12px; flex:1; min-width:0; }
+    .task-check { width:22px; height:22px; border-radius:6px; border:2px solid var(--border-light); display:flex; align-items:center; justify-content:center; font-size:.7rem; cursor:pointer; transition:all .2s; flex-shrink:0; }
+    .task-check:hover { border-color:var(--accent); }
+    .task-check.done { background:var(--success); border-color:var(--success); color:#fff; }
+    .task-title { font-size:.88rem; }
+    .task-title.done { text-decoration:line-through; color:var(--text-dim); }
+
+    /* ===== BADGES ===== */
+    .badge { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:6px; font-size:.68rem; font-weight:600; text-transform:uppercase; letter-spacing:.5px; }
+    .badge-published { background:var(--success-bg); color:var(--success); }
+    .badge-pending { background:var(--warning-bg); color:var(--warning); }
+    .badge-completed { background:var(--success-bg); color:var(--success); }
+    .badge-high { background:var(--danger-bg); color:var(--danger); }
+    .badge-medium { background:var(--warning-bg); color:var(--warning); }
+    .badge-low { background:rgba(100,116,139,.15); color:var(--text-dim); }
+    .badge-info { background:var(--info-bg); color:var(--info); }
+
+    /* ===== DASHBOARD GRID ===== */
+    .dashboard-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+    .full-width { grid-column:1/-1; }
+
+    /* ===== BACK BUTTON ===== */
+    .back-btn { display:inline-flex; align-items:center; gap:8px; color:var(--text-dim); font-size:.85rem; margin-bottom:20px; cursor:pointer; padding:8px 16px; background:var(--card); border:1px solid var(--border); border-radius:var(--radius-sm); transition:all .2s; }
+    .back-btn:hover { color:var(--text); border-color:var(--accent); background:var(--accent-glow); }
+
+    /* ===== SECTION TITLE ===== */
+    .section-title { font-size:1.15rem; font-weight:700; margin-bottom:18px; display:flex; align-items:center; gap:10px; }
+    .section-title .count { font-size:.75rem; color:var(--text-dim); font-weight:500; background:var(--bg); padding:2px 10px; border-radius:20px; }
+
+    /* ===== QUICK STATS ===== */
+    .quick-stat-row { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border); }
+    .quick-stat-row:last-child { border:none; }
+    .quick-stat-label { color:var(--text-dim); font-size:.85rem; }
+    .quick-stat-value { font-weight:700; font-size:.9rem; }
+
+    /* ===== TASK REQUEST MODAL ===== */
+    .modal-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.7); backdrop-filter:blur(8px); z-index:1000; align-items:center; justify-content:center; padding:20px; }
+    .modal-overlay.active { display:flex; }
+    .modal { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:32px; max-width:520px; width:100%; box-shadow:var(--shadow-lg); animation:fadeUp .3s ease; }
+    .modal h2 { font-size:1.2rem; font-weight:700; margin-bottom:6px; }
+    .modal .subtitle { color:var(--text-dim); font-size:.85rem; margin-bottom:24px; }
+    .modal-actions { display:flex; gap:10px; margin-top:24px; justify-content:flex-end; }
+
+    /* ===== TOAST ===== */
+    .toast-container { position:fixed; top:80px; right:24px; z-index:2000; display:flex; flex-direction:column; gap:10px; }
+    .toast { background:var(--card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px 20px; box-shadow:var(--shadow); display:flex; align-items:center; gap:10px; font-size:.9rem; animation:slideDown .3s ease; min-width:280px; }
+    .toast.success { border-left:3px solid var(--success); }
+    .toast.error { border-left:3px solid var(--danger); }
+
+    /* ===== FOOTER ===== */
+    .footer { text-align:center; padding:32px; color:var(--text-dim); font-size:.8rem; border-top:1px solid var(--border); margin-top:40px; }
+    .footer a { color:var(--accent-light); }
+
+    /* ===== RESPONSIVE ===== */
+    @media(max-width:768px) {
+      .container { padding:16px; }
+      .companies-grid { grid-template-columns:1fr; }
+      .dashboard-grid { grid-template-columns:1fr; }
+      .header { padding:0 16px; }
+      .stats-grid { grid-template-columns:repeat(2,1fr); }
+      .login-box { padding:28px 20px; }
+      .modal { padding:24px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="toast-container" id="toast-container"></div>
+
+<!-- Static hidden form for Netlify Forms detection (do not remove) -->
+<form name="task-request" netlify netlify-honeypot="bot-field" hidden>
+  <input type="text" name="title">
+  <select name="priority"></select>
+  <textarea name="details"></textarea>
+  <input type="text" name="company">
+  <input type="email" name="from-email">
+  <input name="bot-field">
+</form>
+
+<!-- REQUEST TASK MODAL -->
+<div class="modal-overlay" id="modal-request">
+  <div class="modal">
+    <h2>📋 Request a Task</h2>
+    <div class="subtitle">Submit a request and Phillip will be notified immediately.</div>
+    <div id="request-error"></div>
+    <form name="task-request" id="task-request-form" data-netlify="true" netlify-honeypot="bot-field">
+      <input type="hidden" name="form-name" value="task-request">
+      <p class="hidden" style="display:none"><label>Don't fill this: <input name="bot-field"></label></p>
+      <div class="form-group">
+        <label>Task Title</label>
+        <input type="text" name="title" id="req-title" placeholder="e.g. Create Instagram Reel for summer sale" required>
+      </div>
+      <div class="form-group">
+        <label>Priority</label>
+        <select name="priority" id="req-priority">
+          <option value="high">🔴 High — Urgent</option>
+          <option value="medium" selected>🟡 Medium — Normal</option>
+          <option value="low">⚪ Low — When possible</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Details (optional)</label>
+        <textarea name="details" id="req-details" placeholder="Any extra context, links, or instructions..."></textarea>
+      </div>
+      <input type="hidden" name="company" id="req-company">
+      <input type="hidden" name="from-email" id="req-from-email">
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('modal-request')">Cancel</button>
+        <button type="submit" class="btn btn-primary btn-sm">📧 Send Request</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- LOGIN PAGE -->
+<div id="page-login" class="login-page">
+  <div class="login-box">
+    <div class="login-logo">
+      <img src="logo.svg" alt="Market Nest" style="height:64px;margin-bottom:16px;filter:brightness(0) invert(1);">
+    </div>
+    <h1>Market Nest</h1>
+    <div class="subtitle">Client Portal Dashboard</div>
+    <div id="login-error"></div>
+    <form onsubmit="return handleLogin(event)">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="your@email.com" required autofocus>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+    </form>
+    <div style="text-align:center;margin-top:16px">
+      <a href="#" onclick="showRegister();return false;" style="color:var(--text-dim);font-size:.82rem">Create admin account</a>
+    </div>
+  </div>
+</div>
+
+<!-- REGISTER PAGE -->
+<div id="page-register" class="login-page" style="display:none">
+  <div class="login-box">
+    <div class="login-logo">
+      <img src="logo.svg" alt="Market Nest" style="height:64px;margin-bottom:16px;filter:brightness(0) invert(1);">
+    </div>
+    <h1>Create Admin Account</h1>
+    <div class="subtitle">Set up your Market Nest access</div>
+    <div id="register-error"></div>
+    <form onsubmit="return handleRegister(event)">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="reg-email" placeholder="admin@yourcompany.com" required>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="reg-password" placeholder="Min 6 characters" required minlength="6">
+      </div>
+      <div class="form-group">
+        <label>Confirm Password</label>
+        <input type="password" id="reg-confirm" placeholder="Repeat password" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+    </form>
+    <div style="text-align:center;margin-top:16px">
+      <a href="#" onclick="showLogin();return false;" style="color:var(--text-dim);font-size:.82rem">← Back to login</a>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="page-app" style="display:none">
+  <div class="header">
+    <div class="header-left">
+      <div class="header-logo"><img src="logo.svg" alt="MN" style="height:24px;filter:brightness(0) invert(1);"></div>
+      <h1>Market Nest <span>Client Portal</span></h1>
+    </div>
+    <div class="header-right">
+      <div class="user-pill">
+        <div class="avatar" id="user-avatar">A</div>
+        <span id="user-name">Admin</span>
+      </div>
+      <button class="btn btn-ghost btn-xs" onclick="handleLogout()">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- ADMIN VIEW -->
+    <div id="view-admin">
+      <div class="stats-grid" id="admin-stats"></div>
+      <div class="section-title">🏢 All Companies <span class="count" id="company-count"></span></div>
+      <div class="companies-grid" id="admin-companies"></div>
+      <div class="section-title">📆 Today's Activity</div>
+      <div id="admin-today-updates"></div>
+    </div>
+
+    <!-- CLIENT VIEW -->
+    <div id="view-client">
+      <div id="client-area"></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Market Nest Client Portal · All businesses managed under one roof<br>
+    <a href="https://github.com/philly88r/zoo-client-portal" target="_blank">View on GitHub</a>
+  </div>
 </div>
-
-<!-- LOGIN PAGE -->
-<div id="page-login" class="login-page">
-  <div class="login-box">
-    <div class="login-logo">
-      <img src="logo.svg" alt="Market Nest" style="height:64px;margin-bottom:16px;filter:brightness(0) invert(1);">
-    </div>
-    <h1>Market Nest</h1>
-    <div class="subtitle">Client Portal Dashboard</div>
-    <div id="login-error"></div>
-    <form onsubmit="return handleLogin(event)">
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="login-email" placeholder="your@email.com" required autofocus>
-      </div>
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" id="login-password" placeholder="••••••••" required>
-      </div>
-      <button type="submit" class="btn btn-primary btn-full">Sign In</button>
-    </form>
-    <div style="text-align:center;margin-top:16px">
-      <a href="#" onclick="showRegister();return false;" style="color:var(--text-dim);font-size:.82rem">Create admin account</a>
-    </div>
-  </div>
-</div>
-
-<!-- REGISTER PAGE -->
-<div id="page-register" class="login-page" style="display:none">
-  <div class="login-box">
-    <div class="login-logo">
-      <img src="logo.svg" alt="Market Nest" style="height:64px;margin-bottom:16px;filter:brightness(0) invert(1);">
-    </div>
-    <h1>Create Admin Account</h1>
-    <div class="subtitle">Set up your Market Nest access</div>
-    <div id="register-error"></div>
-    <form onsubmit="return handleRegister(event)">
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="reg-email" placeholder="admin@yourcompany.com" required>
-      </div>
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" id="reg-password" placeholder="Min 6 characters" required minlength="6">
-      </div>
-      <div class="form-group">
-        <label>Confirm Password</label>
-        <input type="password" id="reg-confirm" placeholder="Repeat password" required>
-      </div>
-      <button type="submit" class="btn btn-primary btn-full">Create Account</button>
-    </form>
-    <div style="text-align:center;margin-top:16px">
-      <a href="#" onclick="showLogin();return false;" style="color:var(--text-dim);font-size:.82rem">← Back to login</a>
-    </div>
-  </div>
-</div>
-
-<!-- MAIN APP -->
-<div id="page-app" style="display:none">
-  <div class="header">
-    <div class="header-left">
-      <div class="header-logo"><img src="logo.svg" alt="MN" style="height:24px;filter:brightness(0) invert(1);"></div>
-      <h1>Market Nest <span>Client Portal</span></h1>
-    </div>
-    <div class="header-right">
-      <div class="user-pill">
-        <div class="avatar" id="user-avatar">A</div>
-        <span id="user-name">Admin</span>
-      </div>
-      <button class="btn btn-ghost btn-xs" onclick="handleLogout()">Sign Out</button>
-    </div>
-  </div>
-
-  <div class="container">
-    <!-- ADMIN VIEW -->
-    <div id="view-admin">
-      <div class="stats-grid" id="admin-stats"></div>
-      <div class="section-title">🏢 All Companies <span class="count" id="company-count"></span></div>
-      <div class="companies-grid" id="admin-companies"></div>
-      <div class="section-title">📆 Today's Activity</div>
-      <div id="admin-today-updates"></div>
-    </div>
-
-    <!-- CLIENT VIEW -->
-    <div id="view-client">
-      <div id="client-area"></div>
-    </div>
-  </div>
-
-  <div class="footer">
-    Market Nest Client Portal · All businesses managed under one roof<br>
-    <a href="https://github.com/philly88r/zoo-client-portal" target="_blank">View on GitHub</a>
-  </div>
-</div>
-
 <script>
 // ========== CONFIG ==========
-const ADMIN_EMAIL = 'pematthews41@gmail.com'; // For reference only — Netlify sends to your account email
-
-// ========== DATA ==========
+const API = '/api';
 const platformColors = {
   facebook:'#1877F2',linkedin:'#0A66C2',twitter:'#1DA1F2',instagram:'#E4405F',
   tiktok:'#000000',pinterest:'#E60023',youtube:'#FF0000',threads:'#000000',bluesky:'#0085FF'
 };
 
-const defaultCompanies = [
-  {
-    id:1, name:'Burnette Tools', slug:'burnette-tools',
-    industry:'Industrial Manufacturing — Carbide Cutting Tools',
-    desc:'Professional-grade carbide cutting tools for B2B industrial manufacturing. CNC tooling, saw blades, router bits.',
-    email:'burnette-tools@portal.local',
-    social:{facebook:'Burnette Tools',linkedin:'Burnette Tools',twitter:'@d_hanx'},
-    stats:{posts:47,published:42,scheduled:5,followers:1240},
-    updates:[
-      {date:'2026-06-01',published:4,impressions:4800,highlights:['SEO Automation: successfully compiled 2.2K-word long-form B2B article targeting "amana tool cnc router bits" and deployed production build live to burnettetools.com', 'Carbide sharpening post hit 2.3K reach', 'CMT vs Freud comparison got 95 saves']},
-      {date:'2026-05-31',published:2,impressions:3400,highlights:['Blade life extension shared 38 times','Cost-per-hour insert analysis']},
-      {date:'2026-05-30',published:3,impressions:5200,highlights:['CNC automation reach: 3.5K','Burnette Tools at 1,240 followers']},
-    ],
-    tasks:[
-      {title:'CMT vs Freud video comparison',status:'pending',priority:'high'},
-      {title:'Blog: Carbide Science 101',status:'draft',priority:'medium'},
-      {title:'Q3 product launch schedule',status:'pending',priority:'medium'},
-    ]
-  },
-  {
-    id:2, name:'Vow Launch', slug:'vow-launch',
-    industry:'Wedding Planning — DIY & Budget',
-    desc:'DIY wedding planning tips, budget hacks, and luxury aesthetics for engaged couples.',
-    email:'vow-launch@portal.local',
-    social:{facebook:'Vow Launch',linkedin:'Vow Launch'},
-    stats:{posts:38,published:35,scheduled:3,followers:890},
-    updates:[
-      {date:'2026-06-01',published:3,impressions:6500,highlights:['SEO daily automation configured in Agent OS & Obsidian','Grounded reverse-engineered 2.2K-word blog published targeting "free wedding budget calculator"','Champagne wall hack viral: 4.8K reach']},
-      {date:'2026-05-31',published:3,impressions:6000,highlights:['Friday wedding savings shared 72 times','DIY floral tutorial']},
-      {date:'2026-05-30',published:2,impressions:4500,highlights:['Budget wedding guide saved 50 times','Vow Launch at 890 followers']},
-    ],
-    tasks:[
-      {title:'Set up Agent OS & Obsidian daily SEO automation pipeline',status:'completed',priority:'high'},
-      {title:'10 Under-$500 Wedding Hacks carousel',status:'pending',priority:'high'},
-      {title:'Champagne wall tutorial video',status:'pending',priority:'high'},
-      {title:'Venue partner outreach',status:'pending',priority:'medium'},
-    ]
-  },
-  {
-    id:3, name:'Market Nest', slug:'market-nest',
-    industry:'Marketing Agency — Lead Gen & Automation',
-    desc:'Agency growth, lead generation, and marketing automation for marketing agencies.',
-    email:'market-nest@portal.local',
-    social:{facebook:'Market Nest',linkedin:'Market Nest'},
-    stats:{posts:25,published:22,scheduled:3,followers:410},
-    updates:[
-      {date:'2026-05-28',published:1,impressions:1800,highlights:['LinkedIn automation guide: 1.2K views']},
-    ],
-    tasks:[
-      {title:'Case study writeup',status:'draft',priority:'medium'},
-      {title:'Email follow-up sequence',status:'pending',priority:'medium'},
-    ]
-  },
-  {
-    id:4, name:'ProTech Carpet Care', slug:'protech-carpet-care',
-    industry:'Carpet Cleaning & Restoration',
-    desc:'Professional carpet cleaning. Greensboro/Triad NC. Deep fiber steam extraction specialists.',
-    email:'protech-carpet-care@portal.local',
-    social:{facebook:'ProTech Carpet Care'},
-    stats:{posts:52,published:50,scheduled:2,followers:530},
-    updates:[
-      {date:'2026-06-01',published:3,impressions:2000,highlights:['SEO automation pipeline configured (WP REST API)','First article published: allergy relief carpet cleaning (Post #2596)','Technical SEO audit running daily with auto-fixes','Allergy season post: 1.1K reach']},
-      {date:'2026-05-31',published:2,impressions:2400,highlights:['Before/after transformation shared 52 times']},
-      {date:'2026-05-30',published:2,impressions:1700,highlights:['220°F steam extraction education post']},
-    ],
-    tasks:[
-      {title:'SEO automation pipeline setup',status:'completed',priority:'high'},
-      {title:'Daily blog generation via WP REST API',status:'completed',priority:'high'},
-      {title:'Summer cleaning promotion',status:'pending',priority:'high'},
-      {title:'Before/after video series',status:'pending',priority:'high'},
-      {title:'Google Business posts setup',status:'pending',priority:'medium'},
-    ]
-  },
-  {
-    id:5, name:'RDKR (Red Kicks)', slug:'rdkr-red-kicks',
-    industry:'E-Commerce — Fashion',
-    desc:'E-commerce shoe and fashion brand. Store at redikicks.com.',
-    email:'rdkr-red-kicks@portal.local',
-    social:{},
-    stats:{posts:12,published:12,scheduled:0,followers:320},
-    updates:[
-      {date:'2026-05-25',published:1,impressions:450,highlights:['New product launch post']},
-    ],
-    tasks:[
-      {title:'Instagram shopping setup',status:'pending',priority:'high'},
-      {title:'Summer collection campaign',status:'pending',priority:'medium'},
-    ]
-  },
-  {
-    id:6, name:'Liberty Beans Coffee', slug:'liberty-beans-coffee',
-    industry:'Specialty Coffee — Roast, Blend & Fundraiser',
-    desc:'Premium specialty coffee. Medium roast, dark roast, decaf, flavored blends. Fundraiser coffee supporting community organizations. libertybeanscoffee.com',
-    email:'liberty-beans-coffee@portal.local',
-    social:{facebook:'Liberty Beans Coffee'},
-    stats:{posts:363,published:363,scheduled:0,followers:0},
-    updates:[
-      {date:'2026-06-01',published:1,impressions:0,highlights:['SEO automation pipeline configured (WP REST API + SEOPress)','First article published: coffee and health benefits 2026 (Post #29446)','Technical SEO audit: 363 posts scanned, many missing SEOPress meta detected','Daily cron job scheduled for 9:00 AM']},
-    ],
-    tasks:[
-      {title:'SEO automation pipeline setup',status:'completed',priority:'high'},
-      {title:'Daily blog generation via WP REST API',status:'completed',priority:'high'},
-      {title:'Fix missing SEOPress meta on 363 existing posts',status:'in_progress',priority:'high'},
-      {title:'Google Business Profile optimization',status:'pending',priority:'medium'},
-    ]
-  },
-  {
-    id:7, name:'Carbide Saws Inc.', slug:'carbide-saws',
-    industry:'Industrial Manufacturing — Saw Blade Sharpening & Repair',
-    desc:'Saw blade manufacturing, sharpening, and repair since 1954. Authorized Freud service center. High Point, NC.',
-    email:'carbide-saws@portal.local',
-    social:{facebook:'Carbide Saws Inc.'},
-    stats:{posts:1,published:1,scheduled:0,followers:0},
-    updates:[
-      {date:'2026-06-01',published:1,impressions:0,highlights:['SEO automation pipeline configured in Agent OS & Obsidian','First article generated: industrial band saw blade sharpening (15.9KB)','116 technical SEO fixes applied across 38 files','Site deployed live to carbidesawsinc.com via Netlify']},
-    ],
-    tasks:[
-      {title:'SEO automation pipeline setup',status:'completed',priority:'high'},
-      {title:'Daily blog generation running',status:'completed',priority:'high'},
-      {title:'Location page schema markup',status:'pending',priority:'medium'},
-      {title:'Google Business Profile optimization',status:'pending',priority:'medium'},
-    ]
-  }
-];
+let authToken = localStorage.getItem('mn_token') || null;
+let currentUser = null;
 
-// ========== AUTH ==========
-function getUsers() { return JSON.parse(localStorage.getItem('mn_users') || '[]'); }
-function saveUsers(u) { localStorage.setItem('mn_users', JSON.stringify(u)); }
-function getSession() { return JSON.parse(localStorage.getItem('mn_session') || 'null'); }
-function saveSession(s) { localStorage.setItem('mn_session', JSON.stringify(s)); }
-function clearSession() { localStorage.removeItem('mn_session'); }
+async function apiFetch(path, options = {}) {
+  const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+  if (authToken) headers['Authorization'] = 'Bearer ' + authToken;
+  const res = await fetch(API + path, { ...options, headers });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'API error');
+  return data;
+}
 
 function hashPw(pw) {
   let h = 0;
@@ -505,62 +383,48 @@ function hashPw(pw) {
   return 'h_' + Math.abs(h).toString(36);
 }
 
-function initDefaultUsers() {
-  if (getUsers().length > 0) return;
-  const users = [
-    {email:'admin@marketnest.com', password:hashPw('admin88'), role:'admin', name:'Admin', clientId:null},
-    ...defaultCompanies.map(c => ({
-      email: c.email,
-      password: hashPw('client123'),
-      role: 'client',
-      name: c.name,
-      clientId: c.id
-    }))
-  ];
-  saveUsers(users);
-}
-
-function handleLogin(e) {
+async function handleLogin(e) {
   e.preventDefault();
   const email = document.getElementById('login-email').value.trim().toLowerCase();
-  const password = hashPw(document.getElementById('login-password').value);
-  const users = getUsers();
-  const user = users.find(u => u.email === email && u.password === password);
-  if (!user) {
-    document.getElementById('login-error').innerHTML = '<div class="alert alert-error">⚠️ Invalid email or password</div>';
-    return false;
+  const password = document.getElementById('login-password').value;
+  try {
+    const data = await apiFetch('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
+    authToken = data.token;
+    currentUser = data.user;
+    localStorage.setItem('mn_token', authToken);
+    showApp();
+  } catch (err) {
+    document.getElementById('login-error').innerHTML = '<div class="alert alert-error">\u26A0\uFE0F ' + err.message + '</div>';
   }
-  saveSession({email:user.email, role:user.role, name:user.name, clientId:user.clientId});
-  showApp();
   return false;
 }
 
-function handleRegister(e) {
+async function handleRegister(e) {
   e.preventDefault();
   const email = document.getElementById('reg-email').value.trim().toLowerCase();
   const pw = document.getElementById('reg-password').value;
   const confirm = document.getElementById('reg-confirm').value;
-  if (pw !== confirm) { document.getElementById('register-error').innerHTML = '<div class="alert alert-error">⚠️ Passwords do not match</div>'; return false; }
-  if (pw.length < 6) { document.getElementById('register-error').innerHTML = '<div class="alert alert-error">⚠️ Password must be at least 6 characters</div>'; return false; }
-  const users = getUsers();
-  if (users.find(u => u.email === email)) { document.getElementById('register-error').innerHTML = '<div class="alert alert-error">⚠️ Email already registered</div>'; return false; }
-  users.push({email, password:hashPw(pw), role:'admin', name:'Admin', clientId:null});
-  saveUsers(users);
-  saveSession({email, role:'admin', name:'Admin', clientId:null});
-  showApp();
+  if (pw !== confirm) { document.getElementById('register-error').innerHTML = '<div class="alert alert-error">\u26A0\uFE0F Passwords do not match</div>'; return false; }
+  if (pw.length < 6) { document.getElementById('register-error').innerHTML = '<div class="alert alert-error">\u26A0\uFE0F Password must be at least 6 characters</div>'; return false; }
+  try {
+    const data = await apiFetch('/auth/register', { method: 'POST', body: JSON.stringify({ email, password: pw }) });
+    authToken = data.token;
+    currentUser = data.user;
+    localStorage.setItem('mn_token', authToken);
+    showApp();
+  } catch (err) {
+    document.getElementById('register-error').innerHTML = '<div class="alert alert-error">\u26A0\uFE0F ' + err.message + '</div>';
+  }
   return false;
 }
 
-function handleLogout() { clearSession(); showLogin(); }
+function handleLogout() { authToken = null; currentUser = null; localStorage.removeItem('mn_token'); showLogin(); }
 
-// ========== UI ==========
 function showLogin() {
   document.getElementById('page-login').style.display = 'flex';
   document.getElementById('page-register').style.display = 'none';
   document.getElementById('page-app').style.display = 'none';
   document.getElementById('login-error').innerHTML = '';
-  document.getElementById('login-email').value = '';
-  document.getElementById('login-password').value = '';
 }
 
 function showRegister() {
@@ -569,245 +433,140 @@ function showRegister() {
   document.getElementById('register-error').innerHTML = '';
 }
 
-function showApp() {
-  const session = getSession();
-  if (!session) { showLogin(); return; }
-  document.getElementById('page-login').style.display = 'none';
-  document.getElementById('page-register').style.display = 'none';
-  document.getElementById('page-app').style.display = 'block';
-  document.getElementById('user-name').textContent = session.name;
-  document.getElementById('user-avatar').textContent = session.name.charAt(0).toUpperCase();
-  if (session.role === 'admin') {
-    document.getElementById('view-admin').style.display = 'block';
-    document.getElementById('view-client').style.display = 'none';
-    renderAdmin();
-  } else {
-    document.getElementById('view-admin').style.display = 'none';
-    document.getElementById('view-client').style.display = 'block';
-    renderClient(session.clientId);
-  }
+async function showApp() {
+  if (!authToken) { showLogin(); return; }
+  try {
+    const data = await apiFetch('/companies');
+    const companies = data.companies;
+    const isAdmin = companies.length > 1;
+    const userName = isAdmin ? 'Admin' : companies[0].name;
+    currentUser = { email: '', role: isAdmin ? 'admin' : 'client', name: userName };
+    document.getElementById('user-name').textContent = userName;
+    document.getElementById('user-avatar').textContent = userName.charAt(0).toUpperCase();
+    document.getElementById('page-login').style.display = 'none';
+    document.getElementById('page-register').style.display = 'none';
+    document.getElementById('page-app').style.display = 'block';
+    if (isAdmin) {
+      document.getElementById('view-admin').style.display = 'block';
+      document.getElementById('view-client').style.display = 'none';
+      renderAdmin(companies);
+    } else {
+      document.getElementById('view-admin').style.display = 'none';
+      document.getElementById('view-client').style.display = 'block';
+      renderClient(companies[0]);
+    }
+  } catch (err) { console.error('Auth failed:', err); handleLogout(); }
 }
 
-// ========== RENDER ADMIN ==========
-function renderAdmin() {
-  const companies = defaultCompanies;
-  const today = new Date().toISOString().split('T')[0];
-  const totalPosts = companies.reduce((s,c) => s + c.stats.posts, 0);
-  const totalPublished = companies.reduce((s,c) => s + c.stats.published, 0);
-  const totalFollowers = companies.reduce((s,c) => s + c.stats.followers, 0);
-  const pendingTasks = companies.reduce((s,c) => s + c.tasks.filter(t => t.status !== 'completed').length, 0);
-
-  document.getElementById('admin-stats').innerHTML = `
-    <div class="stat-card fade-up"><div class="stat-icon" style="background:var(--accent-glow);color:var(--accent-light)">🏢</div><div class="stat-number">${companies.length}</div><div class="stat-label">Companies</div></div>
-    <div class="stat-card fade-up fade-up-1"><div class="stat-icon" style="background:var(--info-bg);color:var(--info)">📝</div><div class="stat-number">${totalPosts}</div><div class="stat-label">Total Posts</div></div>
-    <div class="stat-card fade-up fade-up-2"><div class="stat-icon" style="background:var(--success-bg);color:var(--success)">✅</div><div class="stat-number">${totalPublished}</div><div class="stat-label">Published</div></div>
-    <div class="stat-card fade-up fade-up-3"><div class="stat-icon" style="background:var(--warning-bg);color:var(--warning)">👥</div><div class="stat-number">${totalFollowers.toLocaleString()}</div><div class="stat-label">Followers</div></div>
-  `;
+function renderAdmin(companies) {
+  const totalPosts = companies.reduce((s,c) => s + (c.stats?.posts||0), 0);
+  const totalPublished = companies.reduce((s,c) => s + (c.stats?.published||0), 0);
+  const totalFollowers = companies.reduce((s,c) => s + (c.stats?.followers||0), 0);
+  document.getElementById('admin-stats').innerHTML =
+    '<div class="stat-card fade-up"><div class="stat-icon" style="background:var(--accent-glow);color:var(--accent-light)">\uD83C\uDFE2</div><div class="stat-number">' + companies.length + '</div><div class="stat-label">Companies</div></div>' +
+    '<div class="stat-card fade-up fade-up-1"><div class="stat-icon" style="background:var(--info-bg);color:var(--info)">\uD83D\uDCDD</div><div class="stat-number">' + totalPosts + '</div><div class="stat-label">Total Posts</div></div>' +
+    '<div class="stat-card fade-up fade-up-2"><div class="stat-icon" style="background:var(--success-bg);color:var(--success)">\u2705</div><div class="stat-number">' + totalPublished + '</div><div class="stat-label">Published</div></div>' +
+    '<div class="stat-card fade-up fade-up-3"><div class="stat-icon" style="background:var(--warning-bg);color:var(--warning)">\uD83D\uDC65</div><div class="stat-number">' + totalFollowers.toLocaleString() + '</div><div class="stat-label">Followers</div></div>';
   document.getElementById('company-count').textContent = companies.length + ' clients';
 
-  document.getElementById('admin-companies').innerHTML = companies.map(c => {
-    const socialHtml = Object.entries(c.social).map(([p,name]) =>
-      `<span class="social-badge"><span class="social-dot" style="background:${platformColors[p]||'#666'}"></span>${name}</span>`
-    ).join('') || '<span style="color:var(--text-dim);font-size:.72rem">No accounts</span>';
-    const latest = c.updates[0];
-    const pending = c.tasks.filter(t => t.status !== 'completed').length;
-    return `<div class="company-card" onclick="renderClient(${c.id});document.getElementById('view-admin').style.display='none';document.getElementById('view-client').style.display='block';">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
-        <div><div class="name">${c.name}</div><div class="industry">${c.industry}</div></div>
-        ${pending > 0 ? `<span class="badge badge-pending">${pending} open</span>` : ''}
-      </div>
-      <div class="desc">${c.desc}</div>
-      <div class="company-stats-row">
-        <div class="company-stat"><div class="num">${c.stats.posts}</div><div class="lbl">Posts</div></div>
-        <div class="company-stat"><div class="num" style="color:var(--success)">${c.stats.published}</div><div class="lbl">Published</div></div>
-        <div class="company-stat"><div class="num" style="color:var(--accent-light)">${c.stats.followers}</div><div class="lbl">Followers</div></div>
-      </div>
-      <div class="social-links">${socialHtml}</div>
-      ${latest ? `<div class="company-latest"><div class="date">${latest.date} — ${latest.published} posts · ${latest.impressions.toLocaleString()} impressions</div>${latest.highlights[0]}</div>` : ''}
-    </div>`;
+  document.getElementById('admin-companies').innerHTML = companies.map(function(c) {
+    var socialHtml = c.social ? Object.entries(c.social).map(function(e) { return '<span class="social-badge"><span class="social-dot" style="background:' + (platformColors[e[0]]||'#666') + '"></span>' + e[1] + '</span>'; }).join('') : '<span style="color:var(--text-dim);font-size:.72rem">No accounts</span>';
+    var latest = c.latestUpdate;
+    var pending = c.pendingTasks || 0;
+    return '<div class="company-card" onclick="loadCompanyDetail(' + c.id + ')">' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px"><div><div class="name">' + c.name + '</div><div class="industry">' + c.industry + '</div></div>' + (pending > 0 ? '<span class="badge badge-pending">' + pending + ' open</span>' : '') + '</div>' +
+      '<div class="desc">' + c.description + '</div>' +
+      '<div class="company-stats-row"><div class="company-stat"><div class="num">' + (c.stats?.posts||0) + '</div><div class="lbl">Posts</div></div><div class="company-stat"><div class="num" style="color:var(--success)">' + (c.stats?.published||0) + '</div><div class="lbl">Published</div></div><div class="company-stat"><div class="num" style="color:var(--accent-light)">' + (c.stats?.followers||0) + '</div><div class="lbl">Followers</div></div></div>' +
+      '<div class="social-links">' + socialHtml + '</div>' +
+      (latest ? '<div class="company-latest"><div class="date">' + latest.date + ' \u2014 ' + latest.published + ' posts \u00B7 ' + latest.impressions.toLocaleString() + ' impressions</div>' + ((latest.highlights||[])[0]||'') + '</div>' : '') +
+    '</div>';
   }).join('');
 
-  const todayUpdates = [];
-  companies.forEach(c => {
-    const todayUp = c.updates.find(u => u.date === today) || c.updates[0];
-    if (todayUp) todayUpdates.push({company:c.name, ...todayUp});
-  });
-
+  var todayUpdates = [];
+  companies.forEach(function(c) { if (c.latestUpdate) todayUpdates.push({company:c.name, date:c.latestUpdate.date, published:c.latestUpdate.published, impressions:c.latestUpdate.impressions, highlights:c.latestUpdate.highlights}); });
   document.getElementById('admin-today-updates').innerHTML = todayUpdates.length > 0
-    ? `<div class="card"><div style="display:flex;flex-direction:column;gap:0">${todayUpdates.map(u => `
-        <div class="update-item">
-          <div class="update-date">🏢 ${u.company} — ${u.date}</div>
-          <div class="update-stats">${u.published} posts published · ${u.impressions.toLocaleString()} impressions</div>
-          <ul class="update-highlights">${u.highlights.map(h => `<li>${h}</li>`).join('')}</ul>
-        </div>`).join('')}</div></div>`
+    ? '<div class="card"><div style="display:flex;flex-direction:column;gap:0">' + todayUpdates.slice(0,5).map(function(u) {
+        return '<div class="update-item"><div class="update-date">\uD83C\uDFE2 ' + u.company + ' \u2014 ' + u.date + '</div><div class="update-stats">' + u.published + ' posts published \u00B7 ' + u.impressions.toLocaleString() + ' impressions</div><ul class="update-highlights">' + (u.highlights||[]).map(function(h){return '<li>'+h+'</li>';}).join('') + '</ul></div>';
+      }).join('') + '</div></div>'
     : '<div class="card"><p style="color:var(--text-dim)">No updates yet today.</p></div>';
 }
 
-// ========== RENDER CLIENT ==========
-function renderClient(id) {
-  const c = defaultCompanies.find(x => x.id === id);
-  if (!c) return;
-  const session = getSession();
-  const isAdmin = session && session.role === 'admin';
-
-  const socialHtml = Object.entries(c.social).map(([p,name]) =>
-    `<span class="social-badge" style="padding:6px 14px;font-size:.8rem"><span class="social-dot" style="background:${platformColors[p]||'#666'}"></span>${name}</span>`
-  ).join('') || '<span style="color:var(--text-dim)">No accounts connected yet</span>';
-
-  const updatesHtml = c.updates.map(u => `
-    <div class="update-item">
-      <div class="update-date">📅 ${u.date}</div>
-      <div class="update-stats">${u.published} posts published · ${u.impressions.toLocaleString()} impressions</div>
-      <ul class="update-highlights">${u.highlights.map(h => `<li>${h}</li>`).join('')}</ul>
-    </div>`).join('') || '<p style="color:var(--text-dim)">No updates yet.</p>';
-
-  const tasksHtml = c.tasks.map((t,i) => `
-    <div class="task-item">
-      <div class="task-info">
-        <div class="task-check ${t.status==='completed'?'done':''}" onclick="toggleTask(${id},${i})">${t.status==='completed'?'✓':''}</div>
-        <span class="task-title ${t.status==='completed'?'done':''}">${t.title}</span>
-      </div>
-      <span class="badge badge-${t.priority}">${t.priority}</span>
-    </div>`).join('') || '<p style="color:var(--text-dim)">No tasks.</p>';
-
-  document.getElementById('client-area').innerHTML = `
-    ${isAdmin ? '<a class="back-btn" onclick="document.getElementById(\'view-admin\').style.display=\'block\';document.getElementById(\'view-client\').style.display=\'none\'">← Back to All Companies</a>' : ''}
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:16px" class="fade-up">
-      <div>
-        <h2 style="font-size:1.8rem;font-weight:800;letter-spacing:-.02em;margin-bottom:4px">${c.name}</h2>
-        <div style="color:var(--accent-light);font-size:.9rem;font-weight:500">${c.industry}</div>
-      </div>
-      <button class="btn btn-primary btn-sm" onclick="openModal('modal-request')">📋 Request a Task</button>
-    </div>
-    <div class="stats-grid fade-up fade-up-1">
-      <div class="stat-card"><div class="stat-icon" style="background:var(--info-bg);color:var(--info)">📝</div><div class="stat-number">${c.stats.posts}</div><div class="stat-label">Total Posts</div></div>
-      <div class="stat-card"><div class="stat-icon" style="background:var(--success-bg);color:var(--success)">✅</div><div class="stat-number">${c.stats.published}</div><div class="stat-label">Published</div></div>
-      <div class="stat-card"><div class="stat-icon" style="background:var(--accent-glow);color:var(--accent-light)">📅</div><div class="stat-number">${c.stats.scheduled}</div><div class="stat-label">Scheduled</div></div>
-      <div class="stat-card"><div class="stat-icon" style="background:var(--warning-bg);color:var(--warning)">👥</div><div class="stat-number">${c.stats.followers.toLocaleString()}</div><div class="stat-label">Followers</div></div>
-    </div>
-    <div class="card fade-up fade-up-2" style="margin-bottom:20px"><div class="card-header"><h3>🔗 Connected Accounts</h3></div><div class="social-links">${socialHtml}</div></div>
-    <div class="dashboard-grid fade-up fade-up-3">
-      <div>
-        <div class="card"><div class="card-header"><h3>📅 Daily Updates</h3></div><div>${updatesHtml}</div></div>
-      </div>
-      <div>
-        <div class="card">
-          <div class="card-header"><h3>✅ Tasks</h3><button class="btn btn-ghost btn-xs" onclick="openModal('modal-request')">+ New Request</button></div>
-          ${tasksHtml}
-        </div>
-        <div class="card">
-          <div class="card-header"><h3>📊 Quick Stats</h3></div>
-          <div class="quick-stat-row"><span class="quick-stat-label">Engagement Rate</span><span class="quick-stat-value">4.2%</span></div>
-          <div class="quick-stat-row"><span class="quick-stat-label">Avg. Impressions</span><span class="quick-stat-value">3.1K</span></div>
-          <div class="quick-stat-row"><span class="quick-stat-label">Best Day</span><span class="quick-stat-value">Tuesday</span></div>
-          <div class="quick-stat-row"><span class="quick-stat-label">This Month</span><span class="quick-stat-value">${c.stats.posts} posts</span></div>
-        </div>
-      </div>
-    </div>
-  `;
+async function loadCompanyDetail(companyId) {
+  try {
+    var data = await apiFetch('/companies/' + companyId);
+    document.getElementById('view-admin').style.display = 'none';
+    document.getElementById('view-client').style.display = 'block';
+    renderClient(data.company, true);
+  } catch (err) { showToast('error', 'Failed to load company: ' + err.message); }
 }
 
-function toggleTask(companyId, taskIndex) {
-  const el = document.querySelectorAll('.task-check')[taskIndex];
-  const title = document.querySelectorAll('.task-title')[taskIndex];
-  if (el.classList.contains('done')) {
-    el.classList.remove('done'); el.textContent = ''; title.classList.remove('done');
-  } else {
-    el.classList.add('done'); el.textContent = '✓'; title.classList.add('done');
-  }
+function renderClient(c, isAdmin) {
+  var socialHtml = c.social ? Object.entries(c.social).map(function(e) { return '<span class="social-badge" style="padding:6px 14px;font-size:.8rem"><span class="social-dot" style="background:' + (platformColors[e[0]]||'#666') + '"></span>' + e[1] + '</span>'; }).join('') : '<span style="color:var(--text-dim)">No accounts connected yet</span>';
+  var updatesHtml = (c.updates||[]).map(function(u) {
+    return '<div class="update-item"><div class="update-date">\uD83D\uDCC5 ' + u.date + '</div><div class="update-stats">' + u.published + ' posts published \u00B7 ' + u.impressions.toLocaleString() + ' impressions</div><ul class="update-highlights">' + (u.highlights||[]).map(function(h){return '<li>'+h+'</li>';}).join('') + '</ul></div>';
+  }).join('') || '<p style="color:var(--text-dim)">No updates yet.</p>';
+  var tasksHtml = (c.tasks||[]).map(function(t) {
+    return '<div class="task-item"><div class="task-info"><div class="task-check ' + (t.status==='completed'?'done':'') + '" onclick="toggleTask(' + c.id + ',' + t.id + ',\'' + t.status + '\')">' + (t.status==='completed'?'\u2713':'') + '</div><span class="task-title ' + (t.status==='completed'?'done':'') + '">' + t.title + '</span></div><span class="badge badge-' + t.priority + '">' + t.priority + '</span></div>';
+  }).join('') || '<p style="color:var(--text-dim)">No tasks.</p>';
+
+  document.getElementById('client-area').innerHTML =
+    (isAdmin ? '<a class="back-btn" onclick="backToAdmin()">\u2190 Back to All Companies</a>' : '') +
+    '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:16px" class="fade-up"><div><h2 style="font-size:1.8rem;font-weight:800;letter-spacing:-.02em;margin-bottom:4px">' + c.name + '</h2><div style="color:var(--accent-light);font-size:.9rem;font-weight:500">' + c.industry + '</div></div><button class="btn btn-primary btn-sm" onclick="openModal(\'modal-request\')">\uD83D\uDCCB Request a Task</button></div>' +
+    '<div class="stats-grid fade-up fade-up-1"><div class="stat-card"><div class="stat-icon" style="background:var(--info-bg);color:var(--info)">\uD83D\uDCDD</div><div class="stat-number">' + (c.stats?.posts||0) + '</div><div class="stat-label">Total Posts</div></div><div class="stat-card"><div class="stat-icon" style="background:var(--success-bg);color:var(--success)">\u2705</div><div class="stat-number">' + (c.stats?.published||0) + '</div><div class="stat-label">Published</div></div><div class="stat-card"><div class="stat-icon" style="background:var(--accent-glow);color:var(--accent-light)">\uD83D\uDCC5</div><div class="stat-number">' + (c.stats?.scheduled||0) + '</div><div class="stat-label">Scheduled</div></div><div class="stat-card"><div class="stat-icon" style="background:var(--warning-bg);color:var(--warning)">\uD83D\uDC65</div><div class="stat-number">' + (c.stats?.followers||0).toLocaleString() + '</div><div class="stat-label">Followers</div></div></div>' +
+    '<div class="card fade-up fade-up-2" style="margin-bottom:20px"><div class="card-header"><h3>\uD83D\uDD17 Connected Accounts</h3></div><div class="social-links">' + socialHtml + '</div></div>' +
+    '<div class="dashboard-grid fade-up fade-up-3"><div><div class="card"><div class="card-header"><h3>\uD83D\uDCC5 Daily Updates</h3></div><div>' + updatesHtml + '</div></div></div><div><div class="card"><div class="card-header"><h3>\u2705 Tasks</h3><button class="btn btn-ghost btn-xs" onclick="openModal(\'modal-request\')">+ New Request</button></div>' + tasksHtml + '</div><div class="card"><div class="card-header"><h3>\uD83D\uDCCA Quick Stats</h3></div><div class="quick-stat-row"><span class="quick-stat-label">Engagement Rate</span><span class="quick-stat-value">4.2%</span></div><div class="quick-stat-row"><span class="quick-stat-label">Avg. Impressions</span><span class="quick-stat-value">3.1K</span></div><div class="quick-stat-row"><span class="quick-stat-label">Best Day</span><span class="quick-stat-value">Tuesday</span></div><div class="quick-stat-row"><span class="quick-stat-label">This Month</span><span class="quick-stat-value">' + (c.stats?.posts||0) + ' posts</span></div></div></div></div>';
 }
 
-// ========== MODAL ==========
+async function backToAdmin() {
+  document.getElementById('view-client').style.display = 'none';
+  document.getElementById('view-admin').style.display = 'block';
+  try { var data = await apiFetch('/companies'); renderAdmin(data.companies); } catch (err) { showToast('error', 'Failed to reload: ' + err.message); }
+}
+
+async function toggleTask(companyId, taskId, currentStatus) {
+  var newStatus = currentStatus === 'completed' ? 'pending' : 'completed';
+  try {
+    await apiFetch('/companies/' + companyId, { method: 'PUT', body: JSON.stringify({ taskId: taskId, status: newStatus }) });
+    var data = await apiFetch('/companies/' + companyId);
+    renderClient(data.company, currentUser.role === 'admin');
+  } catch (err) { showToast('error', 'Failed to update task: ' + err.message); }
+}
+
 function openModal(id) {
-  // Pre-fill hidden fields when opening request modal
-  if (id === 'modal-request') {
-    const session = getSession();
-    const company = session ? (defaultCompanies.find(c => c.id === session.clientId) || {name:session.name}) : {name:'Unknown'};
-    document.getElementById('req-company').value = company.name;
-    document.getElementById('req-from-email').value = session?.email || '';
-  }
+  if (id === 'modal-request') { document.getElementById('req-company').value = currentUser ? currentUser.name : ''; document.getElementById('req-from-email').value = currentUser ? currentUser.email : ''; }
   document.getElementById(id).classList.add('active');
 }
 function closeModal(id) { document.getElementById(id).classList.remove('active'); document.getElementById('request-error').innerHTML = ''; }
 
-// ========== NETLIFY FORM SUBMIT ==========
 document.addEventListener('DOMContentLoaded', function() {
-  const form = document.getElementById('task-request-form');
-  if (form) {
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const title = document.getElementById('req-title').value.trim();
-      if (!title) {
-        document.getElementById('request-error').innerHTML = '<div class="alert alert-error">⚠️ Please enter a task title</div>';
-        return;
-      }
-
-      const btn = form.querySelector('button[type="submit"]');
-      const origText = btn.innerHTML;
-      btn.innerHTML = '⏳ Sending...';
-      btn.disabled = true;
-
-      const formData = new FormData(form);
-
-      fetch('/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(formData).toString()
-      })
-      .then(response => {
-        btn.innerHTML = origText;
-        btn.disabled = false;
-        if (response.ok) {
-          // Add task to local company list
-          const session = getSession();
-          if (session && session.clientId) {
-            const c = defaultCompanies.find(x => x.id === session.clientId);
-            if (c) c.tasks.push({title, status:'pending', priority: document.getElementById('req-priority').value});
-          }
-          // Save to localStorage
-          const requests = JSON.parse(localStorage.getItem('mn_task_requests') || '[]');
-          requests.push({
-            title,
-            priority: document.getElementById('req-priority').value,
-            details: document.getElementById('req-details').value.trim(),
-            company: document.getElementById('req-company').value,
-            email: session?.email || '',
-            date: new Date().toISOString()
-          });
-          localStorage.setItem('mn_task_requests', JSON.stringify(requests));
-
-          closeModal('modal-request');
-          form.reset();
-          showToast('success', '📧 Task request sent! Phillip has been notified.');
-          // Re-render if in client view
-          if (session && session.clientId) renderClient(session.clientId);
-        } else {
-          document.getElementById('request-error').innerHTML = '<div class="alert alert-error">⚠️ Failed to send. Please try again.</div>';
-        }
-      })
-      .catch(() => {
-        btn.innerHTML = origText;
-        btn.disabled = false;
-        document.getElementById('request-error').innerHTML = '<div class="alert alert-error">⚠️ Network error. Please try again.</div>';
-      });
-    });
-  }
+  var form = document.getElementById('task-request-form');
+  if (!form) return;
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var title = document.getElementById('req-title').value.trim();
+    if (!title) { document.getElementById('request-error').innerHTML = '<div class="alert alert-error">\u26A0\uFE0F Please enter a task title</div>'; return; }
+    var btn = form.querySelector('button[type="submit"]');
+    var origText = btn.innerHTML;
+    btn.innerHTML = '\u23F3 Sending...'; btn.disabled = true;
+    try {
+      await apiFetch('/task-requests', { method: 'POST', body: JSON.stringify({ title: title, priority: document.getElementById('req-priority').value, details: document.getElementById('req-details').value.trim() }) });
+      closeModal('modal-request'); form.reset();
+      showToast('success', '\uD83D\uDCE7 Task request sent! Phillip has been notified.');
+    } catch (err) { document.getElementById('request-error').innerHTML = '<div class="alert alert-error">\u26A0\uFE0F ' + err.message + '</div>'; }
+    finally { btn.innerHTML = origText; btn.disabled = false; }
+  });
 });
 
-// ========== TOAST ==========
 function showToast(type, msg) {
-  const container = document.getElementById('toast-container');
-  const toast = document.createElement('div');
-  toast.className = `toast ${type}`;
+  var container = document.getElementById('toast-container');
+  var toast = document.createElement('div');
+  toast.className = 'toast ' + type;
   toast.innerHTML = msg;
   container.appendChild(toast);
-  setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(-10px)'; setTimeout(() => toast.remove(), 300); }, 4000);
+  setTimeout(function() { toast.style.opacity = '0'; toast.style.transform = 'translateY(-10px)'; setTimeout(function() { toast.remove(); }, 300); }, 4000);
 }
 
-// ========== INIT ==========
-initDefaultUsers();
-const session = getSession();
-if (session) { showApp(); } else { showLogin(); }
+if (authToken) { showApp(); } else { showLogin(); }
 </script>
 </body>
 </html>

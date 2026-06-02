@@ -1,0 +1,11 @@
+name = "market-nest-client-portal"
+compatibility_date = "2024-12-01"
+pages_build_output_dir = "."
+
+[[d1_databases]]
+binding = "DB"
+database_name = "market-nest-portal"
+database_id = "1320ea84-9e0b-4cfe-923d-7ba176a0be64"
+
+[vars]
+SYNC_SECRET = "vMdlaiP3AAkyCK6bdhrfC4ke6Cx3sM5D"
