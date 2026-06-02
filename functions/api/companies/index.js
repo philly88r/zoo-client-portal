@@ -47,6 +47,15 @@ export async function onRequestGet(context) {
         ...latestUpdates[0],
         highlights: JSON.parse(latestUpdates[0].highlights || '[]'),
       } : null;
+
+      // Recent updates (last 5)
+      const { results: recentUpdates } = await env.DB.prepare(
+        'SELECT date, published, impressions, highlights FROM company_updates WHERE company_id = ? ORDER BY date DESC LIMIT 5'
+      ).bind(c.id).all();
+      const recent = recentUpdates.map(u => ({
+        ...u,
+        highlights: JSON.parse(u.highlights || '[]')
+      }));
       
       // Pending task count
       const { results: taskCount } = await env.DB.prepare(
@@ -58,6 +67,7 @@ export async function onRequestGet(context) {
         social: Object.fromEntries(social.map(s => [s.platform, s.account_name])),
         stats,
         latestUpdate: latest,
+        recentUpdates: recent,
         pendingTasks: taskCount[0].count,
       };
     }));

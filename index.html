@@ -465,9 +465,25 @@ function renderAdmin(companies) {
     '</div>';
   }).join('');
   var todayUpdates = [];
-  companies.forEach(function(c) { if (c.latestUpdate) todayUpdates.push({company:c.name, date:c.latestUpdate.date, published:c.latestUpdate.published, impressions:c.latestUpdate.impressions, highlights:c.latestUpdate.highlights}); });
+  companies.forEach(function(c) {
+    if (c.recentUpdates) {
+      c.recentUpdates.forEach(function(u) {
+        todayUpdates.push({
+          company: c.name,
+          date: u.date,
+          published: u.published,
+          impressions: u.impressions,
+          highlights: u.highlights
+        });
+      });
+    }
+  });
+  // Sort by date descending
+  todayUpdates.sort(function(a, b) {
+    return b.date.localeCompare(a.date);
+  });
   document.getElementById('admin-today-updates').innerHTML = todayUpdates.length > 0
-    ? '<div class="card"><div style="display:flex;flex-direction:column;gap:0">' + todayUpdates.slice(0,5).map(function(u) {
+    ? '<div class="card"><div style="display:flex;flex-direction:column;gap:0">' + todayUpdates.slice(0,10).map(function(u) {
         return '<div class="update-item"><div class="update-date">\uD83C\uDFE2 ' + u.company + ' \u2014 ' + u.date + '</div><div class="update-stats">' + u.published + ' posts published \u00B7 ' + u.impressions.toLocaleString() + ' impressions</div><ul class="update-highlights">' + (u.highlights||[]).map(function(h){return '<li>'+h+'</li>';}).join('') + '</ul></div>';
       }).join('') + '</div></div>'
     : '<div class="card"><p style="color:var(--text-dim)">No updates yet today.</p></div>';
