@@ -438,7 +438,8 @@ async function showApp() {
     } else {
       document.getElementById('view-admin').style.display = 'none';
       document.getElementById('view-client').style.display = 'block';
-      renderClient(companies[0]);
+      const detailData = await apiFetch('/companies/' + companies[0].id);
+      renderClient(detailData.company, false);
     }
   } catch (err) { console.error('Auth failed:', err); handleLogout(); }
 }
