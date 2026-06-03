@@ -16,12 +16,12 @@ export async function onRequestGet(context) {
     
     if (user.role === 'admin') {
       const { results } = await env.DB.prepare(
-        'SELECT id, name, slug, industry, description, email FROM companies ORDER BY id'
+        'SELECT id, name, slug, industry, description, email, google_drive_url FROM companies ORDER BY id'
       ).all();
       companies = results;
     } else {
       const { results } = await env.DB.prepare(
-        'SELECT id, name, slug, industry, description, email FROM companies WHERE id = ?'
+        'SELECT id, name, slug, industry, description, email, google_drive_url FROM companies WHERE id = ?'
       ).bind(user.company_id).all();
       companies = results;
     }

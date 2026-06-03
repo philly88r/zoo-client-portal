@@ -27,6 +27,7 @@ CREATE TABLE companies (
   industry TEXT NOT NULL,
   description TEXT NOT NULL DEFAULT '',
   email TEXT NOT NULL DEFAULT '',
+  google_drive_url TEXT DEFAULT NULL,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 

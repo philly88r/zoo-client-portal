@@ -20,7 +20,7 @@ export async function onRequestGet(context) {
   try {
     // Company info
     const { results: companies } = await env.DB.prepare(
-      'SELECT id, name, slug, industry, description, email FROM companies WHERE id = ?'
+      'SELECT id, name, slug, industry, description, email, google_drive_url FROM companies WHERE id = ?'
     ).bind(companyId).all();
     
     if (companies.length === 0) return errorResponse('Company not found', 404);

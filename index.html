@@ -505,11 +505,24 @@ function renderClient(c, isAdmin) {
   var tasksHtml = (c.tasks||[]).map(function(t) {
     return '<div class="task-item"><div class="task-info"><div class="task-check ' + (t.status==='completed'?'done':'') + '" onclick="toggleTask(' + c.id + ',' + t.id + ',\'' + t.status + '\')">' + (t.status==='completed'?'\u2713':'') + '</div><span class="task-title ' + (t.status==='completed'?'done':'') + '">' + t.title + '</span></div><span class="badge badge-' + t.priority + '">' + t.priority + '</span></div>';
   }).join('') || '<p style="color:var(--text-dim)">No tasks.</p>';
+  var driveHtml = '';
+  if (c.google_drive_url) {
+    driveHtml = '<div class="card fade-up fade-up-2" style="margin-bottom:20px">' +
+      '<div class="card-header"><h3>📁 Fundraiser & Marketing Assets</h3></div>' +
+      '<div style="display:flex;flex-direction:column;gap:12px;align-items:center;justify-content:center;padding:24px;border:2px dashed var(--border);border-radius:var(--radius-sm);background:var(--bg);text-align:center;transition:all .2s;" onmouseover="this.style.borderColor=\'var(--accent)\'" onmouseout="this.style.borderColor=\'var(--border)\'">' +
+        '<div style="font-size:2.5rem;margin-bottom:8px">📥</div>' +
+        '<div style="font-weight:600;font-size:.95rem;color:var(--text)">Google Drive Upload Folder</div>' +
+        '<p style="color:var(--text-dim);font-size:.8rem;max-width:400px;line-height:1.5;margin:0">Got new fundraiser images or marketing files? Upload them directly to Google Drive so they sync straight to our video and SEO production pipeline.</p>' +
+        '<a href="' + c.google_drive_url + '" target="_blank" class="btn btn-primary btn-sm" style="margin-top:12px">📂 Open Google Drive Folder</a>' +
+      '</div>' +
+    '</div>';
+  }
   document.getElementById('client-area').innerHTML =
     (isAdmin ? '<a class="back-btn" onclick="backToAdmin()">\u2190 Back to All Companies</a>' : '') +
     '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:16px" class="fade-up"><div><h2 style="font-size:1.8rem;font-weight:800;letter-spacing:-.02em;margin-bottom:4px">' + c.name + '</h2><div style="color:var(--accent-light);font-size:.9rem;font-weight:500">' + c.industry + '</div></div><button class="btn btn-primary btn-sm" onclick="openModal(\'modal-request\')">\uD83D\uDCCB Request a Task</button></div>' +
     '<div class="stats-grid fade-up fade-up-1"><div class="stat-card"><div class="stat-icon" style="background:var(--info-bg);color:var(--info)">\uD83D\uDCDD</div><div class="stat-number">' + (c.stats?.posts||0) + '</div><div class="stat-label">Total Posts</div></div><div class="stat-card"><div class="stat-icon" style="background:var(--success-bg);color:var(--success)">\u2705</div><div class="stat-number">' + (c.stats?.published||0) + '</div><div class="stat-label">Published</div></div><div class="stat-card"><div class="stat-icon" style="background:var(--accent-glow);color:var(--accent-light)">\uD83D\uDCC5</div><div class="stat-number">' + (c.stats?.scheduled||0) + '</div><div class="stat-label">Scheduled</div></div><div class="stat-card"><div class="stat-icon" style="background:var(--warning-bg);color:var(--warning)">\uD83D\uDC65</div><div class="stat-number">' + (c.stats?.followers||0).toLocaleString() + '</div><div class="stat-label">Followers</div></div></div>' +
     '<div class="card fade-up fade-up-2" style="margin-bottom:20px"><div class="card-header"><h3>\uD83D\uDD17 Connected Accounts</h3></div><div class="social-links">' + socialHtml + '</div></div>' +
+    driveHtml +
     '<div class="dashboard-grid fade-up fade-up-3"><div><div class="card"><div class="card-header"><h3>\uD83D\uDCC5 Daily Updates</h3></div><div>' + updatesHtml + '</div></div></div><div><div class="card"><div class="card-header"><h3>\u2705 Tasks</h3><button class="btn btn-ghost btn-xs" onclick="openModal(\'modal-request\')">+ New Request</button></div>' + tasksHtml + '</div><div class="card"><div class="card-header"><h3>\uD83D\uDCCA Quick Stats</h3></div><div class="quick-stat-row"><span class="quick-stat-label">Engagement Rate</span><span class="quick-stat-value">4.2%</span></div><div class="quick-stat-row"><span class="quick-stat-label">Avg. Impressions</span><span class="quick-stat-value">3.1K</span></div><div class="quick-stat-row"><span class="quick-stat-label">Best Day</span><span class="quick-stat-value">Tuesday</span></div><div class="quick-stat-row"><span class="quick-stat-label">This Month</span><span class="quick-stat-value">' + (c.stats?.posts||0) + ' posts</span></div></div></div></div>';
 }
 async function backToAdmin() {
