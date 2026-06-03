@@ -20,7 +20,7 @@ export async function onRequestGet(context) {
   try {
     // Company info
     const { results: companies } = await env.DB.prepare(
-      'SELECT id, name, slug, industry, description, email, google_drive_url FROM companies WHERE id = ?'
+      'SELECT id, name, slug, industry, description, email, google_drive_url, fundraiser_text FROM companies WHERE id = ?'
     ).bind(companyId).all();
     
     if (companies.length === 0) return errorResponse('Company not found', 404);
@@ -61,7 +61,7 @@ export async function onRequestGet(context) {
   }
 }
 
-// PUT /api/companies/[id] - toggle task status
+// PUT /api/companies/[id] - toggle task status or update fundraiser text
 export async function onRequestPut(context) {
   const { request, env } = context;
   const companyId = context.params.id;
@@ -74,18 +74,25 @@ export async function onRequestPut(context) {
   }
   
   try {
-    const { taskId, status } = await request.json();
+    const body = await request.json();
+    const { taskId, status, fundraiser_text } = body;
     
-    if (!taskId || !status) {
-      return errorResponse('taskId and status are required');
+    if (taskId && status) {
+      await env.DB.prepare(
+        'UPDATE company_tasks SET status = ? WHERE id = ? AND company_id = ?'
+      ).bind(status, taskId, companyId).run();
+      return jsonResponse({ success: true });
     }
     
-    await env.DB.prepare(
-      'UPDATE company_tasks SET status = ? WHERE id = ? AND company_id = ?'
-    ).bind(status, taskId, companyId).run();
+    if (fundraiser_text !== undefined) {
+      await env.DB.prepare(
+        'UPDATE companies SET fundraiser_text = ? WHERE id = ?'
+      ).bind(fundraiser_text, companyId).run();
+      return jsonResponse({ success: true });
+    }
     
-    return jsonResponse({ success: true });
+    return errorResponse('taskId and status, or fundraiser_text is required', 400);
   } catch (err) {
-    return errorResponse('Failed to update task: ' + err.message, 500);
+    return errorResponse('Failed to update: ' + err.message, 500);
   }
 }

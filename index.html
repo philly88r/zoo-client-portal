@@ -512,8 +512,24 @@ function renderClient(c, isAdmin) {
       '<div style="display:flex;flex-direction:column;gap:12px;align-items:center;justify-content:center;padding:24px;border:2px dashed var(--border);border-radius:var(--radius-sm);background:var(--bg);text-align:center;transition:all .2s;" onmouseover="this.style.borderColor=\'var(--accent)\'" onmouseout="this.style.borderColor=\'var(--border)\'">' +
         '<div style="font-size:2.5rem;margin-bottom:8px">📥</div>' +
         '<div style="font-weight:600;font-size:.95rem;color:var(--text)">Google Drive Upload Folder</div>' +
-        '<p style="color:var(--text-dim);font-size:.8rem;max-width:400px;line-height:1.5;margin:0">Got new fundraiser images or marketing files? Upload them directly to Google Drive so they sync straight to our video and SEO production pipeline.</p>' +
+        '<p style="color:var(--text-dim);font-size:.8rem;max-width:440px;line-height:1.5;margin:0">Got new fundraiser files? Open the folder and upload your images/logos into the appropriate subfolders: <strong>fundraiser products</strong>, <strong>fundraiser gallery</strong>, or <strong>fundraiser logo</strong> so they sync straight to our video and SEO production pipeline.</p>' +
         '<a href="' + c.google_drive_url + '" target="_blank" class="btn btn-primary btn-sm" style="margin-top:12px">📂 Open Google Drive Folder</a>' +
+      '</div>' +
+    '</div>';
+  }
+  var fundraiserTextHtml = '';
+  if (c.id === 6 || c.fundraiser_text !== undefined) {
+    var textVal = c.fundraiser_text || '';
+    fundraiserTextHtml = '<div class="card fade-up fade-up-2" style="margin-bottom:20px">' +
+      '<div class="card-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">' +
+        '<h3>📝 Fundraiser Copy & Text</h3>' +
+        '<span style="font-size:.72rem;color:var(--text-dim);background:var(--bg);padding:3px 10px;border-radius:20px;border:1px solid var(--border);">Autosaved on save</span>' +
+      '</div>' +
+      '<div class="form-group" style="margin-bottom:14px;">' +
+        '<textarea id="fundraiser-text-input" style="min-height:160px;background:var(--bg);border-color:var(--border);color:var(--text);font-size:.9rem;line-height:1.6;" placeholder="Enter details about your upcoming fundraiser here (e.g. fundraiser goals, dates, special coffee blends, pricing, delivery info, customized message for participants)...">' + textVal + '</textarea>' +
+      '</div>' +
+      '<div style="display:flex;justify-content:flex-end;">' +
+        '<button class="btn btn-primary btn-sm" id="btn-save-fundraiser" onclick="saveFundraiserText(' + c.id + ')">💾 Save Fundraiser Text</button>' +
       '</div>' +
     '</div>';
   }
@@ -523,6 +539,7 @@ function renderClient(c, isAdmin) {
     '<div class="stats-grid fade-up fade-up-1"><div class="stat-card"><div class="stat-icon" style="background:var(--info-bg);color:var(--info)">\uD83D\uDCDD</div><div class="stat-number">' + (c.stats?.posts||0) + '</div><div class="stat-label">Total Posts</div></div><div class="stat-card"><div class="stat-icon" style="background:var(--success-bg);color:var(--success)">\u2705</div><div class="stat-number">' + (c.stats?.published||0) + '</div><div class="stat-label">Published</div></div><div class="stat-card"><div class="stat-icon" style="background:var(--accent-glow);color:var(--accent-light)">\uD83D\uDCC5</div><div class="stat-number">' + (c.stats?.scheduled||0) + '</div><div class="stat-label">Scheduled</div></div><div class="stat-card"><div class="stat-icon" style="background:var(--warning-bg);color:var(--warning)">\uD83D\uDC65</div><div class="stat-number">' + (c.stats?.followers||0).toLocaleString() + '</div><div class="stat-label">Followers</div></div></div>' +
     '<div class="card fade-up fade-up-2" style="margin-bottom:20px"><div class="card-header"><h3>\uD83D\uDD17 Connected Accounts</h3></div><div class="social-links">' + socialHtml + '</div></div>' +
     driveHtml +
+    fundraiserTextHtml +
     '<div class="dashboard-grid fade-up fade-up-3"><div><div class="card"><div class="card-header"><h3>\uD83D\uDCC5 Daily Updates</h3></div><div>' + updatesHtml + '</div></div></div><div><div class="card"><div class="card-header"><h3>\u2705 Tasks</h3><button class="btn btn-ghost btn-xs" onclick="openModal(\'modal-request\')">+ New Request</button></div>' + tasksHtml + '</div><div class="card"><div class="card-header"><h3>\uD83D\uDCCA Quick Stats</h3></div><div class="quick-stat-row"><span class="quick-stat-label">Engagement Rate</span><span class="quick-stat-value">4.2%</span></div><div class="quick-stat-row"><span class="quick-stat-label">Avg. Impressions</span><span class="quick-stat-value">3.1K</span></div><div class="quick-stat-row"><span class="quick-stat-label">Best Day</span><span class="quick-stat-value">Tuesday</span></div><div class="quick-stat-row"><span class="quick-stat-label">This Month</span><span class="quick-stat-value">' + (c.stats?.posts||0) + ' posts</span></div></div></div></div>';
 }
 async function backToAdmin() {
@@ -537,6 +554,26 @@ async function toggleTask(companyId, taskId, currentStatus) {
     var data = await apiFetch('/companies/' + companyId);
     renderClient(data.company, currentUser.role === 'admin');
   } catch (err) { showToast('error', 'Failed to update task: ' + err.message); }
+}
+async function saveFundraiserText(companyId) {
+  var btn = document.getElementById('btn-save-fundraiser');
+  var textInput = document.getElementById('fundraiser-text-input');
+  if (!btn || !textInput) return;
+  var origText = btn.innerHTML;
+  btn.innerHTML = '⏳ Saving...';
+  btn.disabled = true;
+  try {
+    await apiFetch('/companies/' + companyId, {
+      method: 'PUT',
+      body: JSON.stringify({ fundraiser_text: textInput.value })
+    });
+    showToast('success', '✅ Fundraiser text saved successfully!');
+  } catch (err) {
+    showToast('error', '❌ Failed to save fundraiser text: ' + err.message);
+  } finally {
+    btn.innerHTML = origText;
+    btn.disabled = false;
+  }
 }
 function openModal(id) {
   if (id === 'modal-request') { document.getElementById('req-company').value = currentUser ? currentUser.name : ''; document.getElementById('req-from-email').value = currentUser ? currentUser.email : ''; }
