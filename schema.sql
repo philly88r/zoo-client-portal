@@ -29,6 +29,7 @@ CREATE TABLE companies (
   email TEXT NOT NULL DEFAULT '',
   google_drive_url TEXT DEFAULT NULL,
   fundraiser_text TEXT DEFAULT NULL,
+  fundraiser_status TEXT DEFAULT 'draft',
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 

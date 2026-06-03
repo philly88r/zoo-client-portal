@@ -533,6 +533,40 @@ function renderClient(c, isAdmin) {
       '</div>' +
     '</div>';
   }
+  var launchStatusHtml = '';
+  if (c.id === 6 || c.fundraiser_status !== undefined) {
+    var status = c.fundraiser_status || 'draft';
+    var statusBadge = '';
+    var statusDesc = '';
+    var buttonHtml = '';
+    
+    if (status === 'draft') {
+      statusBadge = '<span class="badge badge-pending">Draft</span>';
+      statusDesc = 'Your fundraiser is currently in draft. Once you have uploaded all your fundraiser images/logo into the Google Drive folder and completed your fundraiser text, click the button below to submit and build your custom fundraiser automatically.';
+      buttonHtml = '<button class="btn btn-primary btn-sm" onclick="submitFundraiser(' + c.id + ')">🚀 Submit & Build Fundraiser Page</button>';
+    } else if (status === 'submitted' || status === 'pending_launch') {
+      statusBadge = '<span class="badge badge-info" style="animation: pulse 1.5s infinite;">Submitted & Building</span>';
+      statusDesc = '<strong>🚀 Build Triggered!</strong> We are currently running the automated launch pipeline. This will: upload your images to WordPress, create WooCommerce products, set up your fundraiser dashboard manager account, and generate your Elementor landing page. This process takes 1-2 minutes. Please refresh the page shortly.';
+      buttonHtml = '<button class="btn btn-ghost btn-sm" disabled>⏳ Generation in progress...</button>';
+    } else if (status === 'active') {
+      statusBadge = '<span class="badge badge-published">Active / Live</span>';
+      statusDesc = '<strong>🎉 Your fundraiser is live!</strong> All WooCommerce products have been created, your fundraiser dashboard user account is active, and your custom landing page is live.';
+      buttonHtml = '<a href="http://libertybeanscoffee.com/fundraiser-benefiting-' + c.slug + '/" target="_blank" class="btn btn-ghost btn-sm">🔗 View Live Landing Page</a>';
+    }
+    
+    launchStatusHtml = '<div class="card fade-up fade-up-2" style="margin-bottom:20px; border: 1px solid var(--border-light);">' +
+      '<div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">' +
+        '<h3>🚀 Fundraiser Launch Dashboard</h3>' +
+        statusBadge +
+      '</div>' +
+      '<div style="padding:16px; background:var(--bg); border-radius:var(--radius-sm); margin-bottom:16px;">' +
+        '<p style="color:var(--text-secondary); font-size:.88rem; line-height:1.6; margin:0;">' + statusDesc + '</p>' +
+      '</div>' +
+      '<div style="display:flex;justify-content:flex-end;gap:10px;">' +
+        buttonHtml +
+      '</div>' +
+    '</div>';
+  }
   document.getElementById('client-area').innerHTML =
     (isAdmin ? '<a class="back-btn" onclick="backToAdmin()">\u2190 Back to All Companies</a>' : '') +
     '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:16px" class="fade-up"><div><h2 style="font-size:1.8rem;font-weight:800;letter-spacing:-.02em;margin-bottom:4px">' + c.name + '</h2><div style="color:var(--accent-light);font-size:.9rem;font-weight:500">' + c.industry + '</div></div><button class="btn btn-primary btn-sm" onclick="openModal(\'modal-request\')">\uD83D\uDCCB Request a Task</button></div>' +
@@ -540,6 +574,7 @@ function renderClient(c, isAdmin) {
     '<div class="card fade-up fade-up-2" style="margin-bottom:20px"><div class="card-header"><h3>\uD83D\uDD17 Connected Accounts</h3></div><div class="social-links">' + socialHtml + '</div></div>' +
     driveHtml +
     fundraiserTextHtml +
+    launchStatusHtml +
     '<div class="dashboard-grid fade-up fade-up-3"><div><div class="card"><div class="card-header"><h3>\uD83D\uDCC5 Daily Updates</h3></div><div>' + updatesHtml + '</div></div></div><div><div class="card"><div class="card-header"><h3>\u2705 Tasks</h3><button class="btn btn-ghost btn-xs" onclick="openModal(\'modal-request\')">+ New Request</button></div>' + tasksHtml + '</div><div class="card"><div class="card-header"><h3>\uD83D\uDCCA Quick Stats</h3></div><div class="quick-stat-row"><span class="quick-stat-label">Engagement Rate</span><span class="quick-stat-value">4.2%</span></div><div class="quick-stat-row"><span class="quick-stat-label">Avg. Impressions</span><span class="quick-stat-value">3.1K</span></div><div class="quick-stat-row"><span class="quick-stat-label">Best Day</span><span class="quick-stat-value">Tuesday</span></div><div class="quick-stat-row"><span class="quick-stat-label">This Month</span><span class="quick-stat-value">' + (c.stats?.posts||0) + ' posts</span></div></div></div></div>';
 }
 async function backToAdmin() {
@@ -573,6 +608,21 @@ async function saveFundraiserText(companyId) {
   } finally {
     btn.innerHTML = origText;
     btn.disabled = false;
+  }
+}
+async function submitFundraiser(companyId) {
+  if (!confirm("Are you sure you have completed uploading all images to Google Drive and entering your copy text? This will trigger the automated WordPress and WooCommerce product generation pipeline!")) {
+    return;
+  }
+  try {
+    await apiFetch('/companies/' + companyId, {
+      method: 'PUT',
+      body: JSON.stringify({ fundraiser_status: 'submitted' })
+    });
+    showToast('success', '🚀 Fundraiser submitted successfully! The launch pipeline is now running.');
+    setTimeout(() => { location.reload(); }, 1500);
+  } catch (err) {
+    showToast('error', '❌ Failed to submit fundraiser: ' + err.message);
   }
 }
 function openModal(id) {

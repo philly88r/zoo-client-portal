@@ -20,7 +20,7 @@ export async function onRequestGet(context) {
   try {
     // Company info
     const { results: companies } = await env.DB.prepare(
-      'SELECT id, name, slug, industry, description, email, google_drive_url, fundraiser_text FROM companies WHERE id = ?'
+      'SELECT id, name, slug, industry, description, email, google_drive_url, fundraiser_text, fundraiser_status FROM companies WHERE id = ?'
     ).bind(companyId).all();
     
     if (companies.length === 0) return errorResponse('Company not found', 404);
@@ -75,7 +75,7 @@ export async function onRequestPut(context) {
   
   try {
     const body = await request.json();
-    const { taskId, status, fundraiser_text } = body;
+    const { taskId, status, fundraiser_text, fundraiser_status } = body;
     
     if (taskId && status) {
       await env.DB.prepare(
@@ -91,7 +91,14 @@ export async function onRequestPut(context) {
       return jsonResponse({ success: true });
     }
     
-    return errorResponse('taskId and status, or fundraiser_text is required', 400);
+    if (fundraiser_status !== undefined) {
+      await env.DB.prepare(
+        'UPDATE companies SET fundraiser_status = ? WHERE id = ?'
+      ).bind(fundraiser_status, companyId).run();
+      return jsonResponse({ success: true });
+    }
+    
+    return errorResponse('taskId and status, fundraiser_text, or fundraiser_status is required', 400);
   } catch (err) {
     return errorResponse('Failed to update: ' + err.message, 500);
   }
