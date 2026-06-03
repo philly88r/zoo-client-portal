@@ -2,14 +2,14 @@
 -- Run after schema.sql
 
 -- Companies
-INSERT INTO companies (id, name, slug, industry, description, email, google_drive_url, fundraiser_text, fundraiser_status) VALUES
-(1, 'Burnette Tools', 'burnette-tools', 'Industrial Manufacturing — Carbide Cutting Tools', 'Professional-grade carbide cutting tools for B2B industrial manufacturing. CNC tooling, saw blades, router bits.', 'burnette-tools@portal.local', NULL, NULL, 'draft'),
-(2, 'Vow Launch', 'vow-launch', 'Wedding Planning — DIY & Budget', 'DIY wedding planning tips, budget hacks, and luxury aesthetics for engaged couples.', 'vow-launch@portal.local', NULL, NULL, 'draft'),
-(3, 'Market Nest', 'market-nest', 'Marketing Agency — Lead Gen & Automation', 'Agency growth, lead generation, and marketing automation for marketing agencies.', 'market-nest@portal.local', NULL, NULL, 'draft'),
-(4, 'ProTech Carpet Care', 'protech-carpet-care', 'Carpet Cleaning & Restoration', 'Professional carpet cleaning. Greensboro/Triad NC. Deep fiber steam extraction specialists.', 'protech-carpet-care@portal.local', NULL, NULL, 'draft'),
-(5, 'RDKR (Red Kicks)', 'rdkr-red-kicks', 'E-Commerce — Fashion', 'E-commerce shoe and fashion brand. Store at redikicks.com.', 'rdkr-red-kicks@portal.local', NULL, NULL, 'draft'),
-(6, 'Liberty Beans Coffee', 'liberty-beans-coffee', 'Specialty Coffee — Roast, Blend & Fundraiser', 'Premium specialty coffee. Medium roast, dark roast, decaf, flavored blends. Fundraiser coffee supporting community organizations. libertybeanscoffee.com', 'liberty-beans-coffee@portal.local', 'https://drive.google.com/drive/folders/1edBApZ_UlG2BpGYR45xQT8BJ0ivrlnEO?usp=drive_link', NULL, 'draft'),
-(7, 'Carbide Saws Inc.', 'carbide-saws', 'Industrial Manufacturing — Saw Blade Sharpening & Repair', 'Saw blade manufacturing, sharpening, and repair since 1954. Authorized Freud service center. High Point, NC.', 'carbide-saws@portal.local', NULL, NULL, 'draft');
+INSERT INTO companies (id, name, slug, industry, description, email, google_drive_url, fundraiser_text, fundraiser_status, ai_landing_html) VALUES
+(1, 'Burnette Tools', 'burnette-tools', 'Industrial Manufacturing — Carbide Cutting Tools', 'Professional-grade carbide cutting tools for B2B industrial manufacturing. CNC tooling, saw blades, router bits.', 'burnette-tools@portal.local', NULL, NULL, 'draft', NULL),
+(2, 'Vow Launch', 'vow-launch', 'Wedding Planning — DIY & Budget', 'DIY wedding planning tips, budget hacks, and luxury aesthetics for engaged couples.', 'vow-launch@portal.local', NULL, NULL, 'draft', NULL),
+(3, 'Market Nest', 'market-nest', 'Marketing Agency — Lead Gen & Automation', 'Agency growth, lead generation, and marketing automation for marketing agencies.', 'market-nest@portal.local', NULL, NULL, 'draft', NULL),
+(4, 'ProTech Carpet Care', 'protech-carpet-care', 'Carpet Cleaning & Restoration', 'Professional carpet cleaning. Greensboro/Triad NC. Deep fiber steam extraction specialists.', 'protech-carpet-care@portal.local', NULL, NULL, 'draft', NULL),
+(5, 'RDKR (Red Kicks)', 'rdkr-red-kicks', 'E-Commerce — Fashion', 'E-commerce shoe and fashion brand. Store at redikicks.com.', 'rdkr-red-kicks@portal.local', NULL, NULL, 'draft', NULL),
+(6, 'Liberty Beans Coffee', 'liberty-beans-coffee', 'Specialty Coffee — Roast, Blend & Fundraiser', 'Premium specialty coffee. Medium roast, dark roast, decaf, flavored blends. Fundraiser coffee supporting community organizations. libertybeanscoffee.com', 'liberty-beans-coffee@portal.local', 'https://drive.google.com/drive/folders/1edBApZ_UlG2BpGYR45xQT8BJ0ivrlnEO?usp=drive_link', NULL, 'draft', NULL),
+(7, 'Carbide Saws Inc.', 'carbide-saws', 'Industrial Manufacturing — Saw Blade Sharpening & Repair', 'Saw blade manufacturing, sharpening, and repair since 1954. Authorized Freud service center. High Point, NC.', 'carbide-saws@portal.local', NULL, NULL, 'draft', NULL);
 
 -- Users (admin + client accounts)
 -- Passwords use the same hashPw JS function: simple hash for demo

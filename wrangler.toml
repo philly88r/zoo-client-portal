@@ -7,5 +7,8 @@ binding = "DB"
 database_name = "market-nest-portal"
 database_id = "1320ea84-9e0b-4cfe-923d-7ba176a0be64"
 
+[ai]
+binding = "AI"
+
 [vars]
 SYNC_SECRET = "vMdlaiP3AAkyCK6bdhrfC4ke6Cx3sM5D"

@@ -20,7 +20,7 @@ export async function onRequestGet(context) {
   try {
     // Company info
     const { results: companies } = await env.DB.prepare(
-      'SELECT id, name, slug, industry, description, email, google_drive_url, fundraiser_text, fundraiser_status FROM companies WHERE id = ?'
+      'SELECT id, name, slug, industry, description, email, google_drive_url, fundraiser_text, fundraiser_status, ai_landing_html FROM companies WHERE id = ?'
     ).bind(companyId).all();
     
     if (companies.length === 0) return errorResponse('Company not found', 404);
@@ -92,6 +92,43 @@ export async function onRequestPut(context) {
     }
     
     if (fundraiser_status !== undefined) {
+      if (fundraiser_status === 'submitted') {
+        try {
+          const { results: compDetails } = await env.DB.prepare(
+            'SELECT name, slug, description, fundraiser_text FROM companies WHERE id = ?'
+          ).bind(companyId).all();
+          
+          if (compDetails.length > 0) {
+            const companyInfo = compDetails[0];
+            const rawText = companyInfo.fundraiser_text || companyInfo.description || '';
+            
+            console.log('Invoking Cloudflare Workers AI to generate landing page HTML...');
+            const aiResponse = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+              messages: [
+                {
+                  role: "system",
+                  content: "You are an elite, modern front-end web designer. You create exceptionally clean, gorgeous, responsive custom HTML sections for fundraiser landing pages. Keep typography elegant (using clean fonts, Josefin Sans, Inter), use luxurious coffee brand colors (deep warm dark browns, charcoal #1a1414, gold #d4af37, and white). Include custom headings, beautifully styled grids, timeline callouts, and fundraising goals. Return ONLY the raw HTML body (including <style> block for custom classes). Do NOT wrap in ```html or any markdown blocks. Return strictly raw HTML."
+                },
+                {
+                  role: "user",
+                  content: `Create a custom, high-end HTML section for our coffee fundraiser.\n\nOrganization Name: ${companyInfo.name}\n\nClient Description of Fundraiser:\n${rawText}`
+                }
+              ]
+            });
+            
+            if (aiResponse && aiResponse.response) {
+              const cleanedHtml = aiResponse.response.replace(/^```html\s*/i, '').replace(/```\s*$/i, '').trim();
+              await env.DB.prepare(
+                'UPDATE companies SET fundraiser_status = ?, ai_landing_html = ? WHERE id = ?'
+              ).bind(fundraiser_status, cleanedHtml, companyId).run();
+              return jsonResponse({ success: true, ai_generated: true });
+            }
+          }
+        } catch (aiErr) {
+          console.error('⚠️ Cloudflare Workers AI failed:', aiErr.message);
+        }
+      }
+
       await env.DB.prepare(
         'UPDATE companies SET fundraiser_status = ? WHERE id = ?'
       ).bind(fundraiser_status, companyId).run();

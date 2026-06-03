@@ -30,6 +30,7 @@ CREATE TABLE companies (
   google_drive_url TEXT DEFAULT NULL,
   fundraiser_text TEXT DEFAULT NULL,
   fundraiser_status TEXT DEFAULT 'draft',
+  ai_landing_html TEXT DEFAULT NULL,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
