@@ -8,7 +8,7 @@ INSERT INTO companies (id, name, slug, industry, description, email, google_driv
 (3, 'Market Nest', 'market-nest', 'Marketing Agency — Lead Gen & Automation', 'Agency growth, lead generation, and marketing automation for marketing agencies.', 'market-nest@portal.local', NULL),
 (4, 'ProTech Carpet Care', 'protech-carpet-care', 'Carpet Cleaning & Restoration', 'Professional carpet cleaning. Greensboro/Triad NC. Deep fiber steam extraction specialists.', 'protech-carpet-care@portal.local', NULL),
 (5, 'RDKR (Red Kicks)', 'rdkr-red-kicks', 'E-Commerce — Fashion', 'E-commerce shoe and fashion brand. Store at redikicks.com.', 'rdkr-red-kicks@portal.local', NULL),
-(6, 'Liberty Beans Coffee', 'liberty-beans-coffee', 'Specialty Coffee — Roast, Blend & Fundraiser', 'Premium specialty coffee. Medium roast, dark roast, decaf, flavored blends. Fundraiser coffee supporting community organizations. libertybeanscoffee.com', 'liberty-beans-coffee@portal.local', 'https://drive.google.com/drive/folders/17S_6kO94x6yC6f7G8mH_libertybeanscoffee'),
+(6, 'Liberty Beans Coffee', 'liberty-beans-coffee', 'Specialty Coffee — Roast, Blend & Fundraiser', 'Premium specialty coffee. Medium roast, dark roast, decaf, flavored blends. Fundraiser coffee supporting community organizations. libertybeanscoffee.com', 'liberty-beans-coffee@portal.local', 'https://drive.google.com/drive/folders/1edBApZ_UlG2BpGYR45xQT8BJ0ivrlnEO?usp=drive_link'),
 (7, 'Carbide Saws Inc.', 'carbide-saws', 'Industrial Manufacturing — Saw Blade Sharpening & Repair', 'Saw blade manufacturing, sharpening, and repair since 1954. Authorized Freud service center. High Point, NC.', 'carbide-saws@portal.local', NULL);
 
 -- Users (admin + client accounts)
