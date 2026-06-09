@@ -204,6 +204,9 @@
     .footer a { color:var(--accent-light); }
 
     /* ===== RESPONSIVE ===== */
+    @media(max-width:992px) {
+      .client-dashboard-grid { grid-template-columns: 1fr !important; }
+    }
     @media(max-width:768px) {
       .container { padding:16px; }
       .companies-grid { grid-template-columns:1fr; }
@@ -500,41 +503,46 @@ async function loadCompanyDetail(companyId) {
 function renderClient(c, isAdmin) {
   var socialHtml = c.social ? Object.entries(c.social).map(function(e) { return '<span class="social-badge" style="padding:6px 14px;font-size:.8rem"><span class="social-dot" style="background:' + (platformColors[e[0]]||'#666') + '"></span>' + e[1] + '</span>'; }).join('') : '<span style="color:var(--text-dim)">No accounts connected yet</span>';
   var updatesHtml = (c.updates||[]).map(function(u) {
-    return '<div class="update-item"><div class="update-date">\uD83D\uDCC5 ' + u.date + '</div><div class="update-stats">' + u.published + ' posts published \u00B7 ' + u.impressions.toLocaleString() + ' impressions</div><ul class="update-highlights">' + (u.highlights||[]).map(function(h){return '<li>'+h+'</li>';}).join('') + '</ul></div>';
-  }).join('') || '<p style="color:var(--text-dim)">No updates yet.</p>';
+    return '<div class="update-item" style="border-bottom:1px solid var(--border);padding:14px 0;"><div class="update-date" style="font-weight:600;color:var(--accent-light);font-size:.85rem;margin-bottom:6px;display:flex;align-items:center;gap:6px;">\uD83D\uDCC5 ' + u.date + '</div><div class="update-stats" style="font-size:.82rem;color:var(--text-secondary);margin-bottom:8px;">' + u.published + ' posts published \u00B7 ' + u.impressions.toLocaleString() + ' impressions</div><ul class="update-highlights" style="font-size:.82rem;color:var(--text-dim);padding-left:16px;line-height:1.6;">' + (u.highlights||[]).map(function(h){return '<li>'+h+'</li>';}).join('') + '</ul></div>';
+  }).join('') || '<p style="color:var(--text-dim);padding:10px 0;">No updates yet.</p>';
   var tasksHtml = (c.tasks||[]).map(function(t) {
     return '<div class="task-item"><div class="task-info"><div class="task-check ' + (t.status==='completed'?'done':'') + '" onclick="toggleTask(' + c.id + ',' + t.id + ',\'' + t.status + '\')">' + (t.status==='completed'?'\u2713':'') + '</div><span class="task-title ' + (t.status==='completed'?'done':'') + '">' + t.title + '</span></div><span class="badge badge-' + t.priority + '">' + t.priority + '</span></div>';
-  }).join('') || '<p style="color:var(--text-dim)">No tasks.</p>';
+  }).join('') || '<p style="color:var(--text-dim);padding:10px 0;">No tasks.</p>';
+  
   var driveHtml = '';
   if (c.google_drive_url) {
-    driveHtml = '<div class="card fade-up fade-up-2" style="margin-bottom:20px">' +
-      '<div class="card-header"><h3>📁 Fundraiser & Marketing Assets</h3></div>' +
+    var driveText = c.id === 6 
+      ? 'Got new fundraiser files? Open the folder and upload your images/logos into the appropriate subfolders: <strong>fundraiser products</strong>, <strong>fundraiser gallery</strong>, or <strong>fundraiser logo</strong> so they sync straight to our video and SEO production pipeline.'
+      : 'Got new marketing assets? Open the folder and upload your images, brand assets, or logos so they sync straight to our visual and content production pipelines.';
+    
+    driveHtml = '<div class="card" style="margin-bottom:0;">' +
+      '<div class="card-header"><h3>📁 Shared Google Drive</h3></div>' +
       '<div style="display:flex;flex-direction:column;gap:12px;align-items:center;justify-content:center;padding:24px;border:2px dashed var(--border);border-radius:var(--radius-sm);background:var(--bg);text-align:center;transition:all .2s;" onmouseover="this.style.borderColor=\'var(--accent)\'" onmouseout="this.style.borderColor=\'var(--border)\'">' +
-        '<div style="font-size:2.5rem;margin-bottom:8px">📥</div>' +
-        '<div style="font-weight:600;font-size:.95rem;color:var(--text)">Google Drive Upload Folder</div>' +
-        '<p style="color:var(--text-dim);font-size:.8rem;max-width:440px;line-height:1.5;margin:0">Got new fundraiser files? Open the folder and upload your images/logos into the appropriate subfolders: <strong>fundraiser products</strong>, <strong>fundraiser gallery</strong>, or <strong>fundraiser logo</strong> so they sync straight to our video and SEO production pipeline.</p>' +
-        '<a href="' + c.google_drive_url + '" target="_blank" class="btn btn-primary btn-sm" style="margin-top:12px">📂 Open Google Drive Folder</a>' +
+        '<div style="font-size:2rem;margin-bottom:4px">📥</div>' +
+        '<div style="font-weight:600;font-size:.9rem;color:var(--text)">Google Drive Upload Folder</div>' +
+        '<p style="color:var(--text-secondary);font-size:.78rem;max-width:380px;line-height:1.5;margin:0">' + driveText + '</p>' +
+        '<a href="' + c.google_drive_url + '" target="_blank" class="btn btn-ghost btn-sm btn-full" style="margin-top:8px">📂 Open Drive Folder</a>' +
       '</div>' +
     '</div>';
   }
+
   var fundraiserTextHtml = '';
-  if (c.id === 6 || c.fundraiser_text !== undefined) {
+  var launchStatusHtml = '';
+  if (c.id === 6) {
     var textVal = c.fundraiser_text || '';
-    fundraiserTextHtml = '<div class="card fade-up fade-up-2" style="margin-bottom:20px">' +
-      '<div class="card-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">' +
-        '<h3>📝 Fundraiser Copy & Text</h3>' +
-        '<span style="font-size:.72rem;color:var(--text-dim);background:var(--bg);padding:3px 10px;border-radius:20px;border:1px solid var(--border);">Autosaved on save</span>' +
+    fundraiserTextHtml = '<div class="card" style="border: 1px solid var(--border-light); background: rgba(17, 17, 24, 0.4);">' +
+      '<div class="card-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">' +
+        '<h3 style="color:var(--accent-light);">📝 Fundraiser Copy & Text</h3>' +
       '</div>' +
+      '<p style="color:var(--text-secondary);font-size:.78rem;margin-bottom:12px;line-height:1.4;">Enter details about your fundraiser goals, dates, special coffee blends, and custom messages. These sync straight to your landing page and video assets.</p>' +
       '<div class="form-group" style="margin-bottom:14px;">' +
-        '<textarea id="fundraiser-text-input" style="min-height:160px;background:var(--bg);border-color:var(--border);color:var(--text);font-size:.9rem;line-height:1.6;" placeholder="Enter details about your upcoming fundraiser here (e.g. fundraiser goals, dates, special coffee blends, pricing, delivery info, customized message for participants)...">' + textVal + '</textarea>' +
-      '</div>' +
+        '<textarea id="fundraiser-text-input" style="min-height:120px;background:var(--bg);border-color:var(--border);color:var(--text);font-size:.9rem;line-height:1.6;" placeholder="e.g. Benefiting the High School Band, running Oct 1-15...">' + textVal + '</textarea>' +
+      } +
       '<div style="display:flex;justify-content:flex-end;">' +
-        '<button class="btn btn-primary btn-sm" id="btn-save-fundraiser" onclick="saveFundraiserText(' + c.id + ')">💾 Save Fundraiser Text</button>' +
+        '<button class="btn btn-primary btn-sm btn-full" id="btn-save-fundraiser" onclick="saveFundraiserText(' + c.id + ')">💾 Save Copy</button>' +
       '</div>' +
     '</div>';
-  }
-  var launchStatusHtml = '';
-  if (c.id === 6 || c.fundraiser_status !== undefined) {
+
     var status = c.fundraiser_status || 'draft';
     var statusBadge = '';
     var statusDesc = '';
@@ -542,40 +550,87 @@ function renderClient(c, isAdmin) {
     
     if (status === 'draft') {
       statusBadge = '<span class="badge badge-pending">Draft</span>';
-      statusDesc = 'Your fundraiser is currently in draft. Once you have uploaded all your fundraiser images/logo into the Google Drive folder and completed your fundraiser text, click the button below to submit and build your custom fundraiser automatically.';
-      buttonHtml = '<button class="btn btn-primary btn-sm" onclick="submitFundraiser(' + c.id + ')">🚀 Submit & Build Fundraiser Page</button>';
+      statusDesc = 'Your fundraiser is currently in draft. Once your assets and copy are ready, click below to build your custom landing page automatically.';
+      buttonHtml = '<button class="btn btn-primary btn-sm btn-full" onclick="submitFundraiser(' + c.id + ')">🚀 Submit & Build Landing Page</button>';
     } else if (status === 'submitted' || status === 'pending_launch') {
-      statusBadge = '<span class="badge badge-info" style="animation: pulse 1.5s infinite;">Submitted & Building</span>';
-      statusDesc = '<strong>🚀 Build Triggered!</strong> We are currently running the automated launch pipeline. This will: upload your images to WordPress, create WooCommerce products, set up your fundraiser dashboard manager account, and generate your Elementor landing page. This process takes 1-2 minutes. Please refresh the page shortly.';
-      buttonHtml = '<button class="btn btn-ghost btn-sm" disabled>⏳ Generation in progress...</button>';
+      statusBadge = '<span class="badge badge-info" style="animation: pulse 1.5s infinite;">Building...</span>';
+      statusDesc = '<strong>🚀 Build Triggered!</strong> We are running the automated launch pipeline to build WooCommerce products and your custom landing page. This takes 1-2 minutes. Please refresh shortly.';
+      buttonHtml = '<button class="btn btn-ghost btn-sm btn-full" disabled>⏳ Generating assets...</button>';
     } else if (status === 'active') {
-      statusBadge = '<span class="badge badge-published">Active / Live</span>';
-      statusDesc = '<strong>🎉 Your fundraiser is live!</strong> All WooCommerce products have been created, your fundraiser dashboard user account is active, and your custom landing page is live.';
-      buttonHtml = '<a href="http://libertybeanscoffee.com/fundraiser-benefiting-' + c.slug + '/" target="_blank" class="btn btn-ghost btn-sm">🔗 View Live Landing Page</a>';
+      statusBadge = '<span class="badge badge-published">Live</span>';
+      statusDesc = '<strong>🎉 Your fundraiser is live!</strong> WooCommerce products, the fundraiser dashboard manager, and your landing page are fully active.';
+      buttonHtml = '<a href="http://libertybeanscoffee.com/fundraiser-benefiting-' + c.slug + '/" target="_blank" class="btn btn-primary btn-sm btn-full">🔗 View Live Landing Page</a>';
     }
     
-    launchStatusHtml = '<div class="card fade-up fade-up-2" style="margin-bottom:20px; border: 1px solid var(--border-light);">' +
-      '<div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">' +
-        '<h3>🚀 Fundraiser Launch Dashboard</h3>' +
+    launchStatusHtml = '<div class="card" style="border: 1px solid var(--border-light); background: rgba(0,255,185,.02);">' +
+      '<div class="card-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">' +
+        '<h3 style="color:var(--accent);">🚀 Fundraiser Launch Dashboard</h3>' +
         statusBadge +
       '</div>' +
-      '<div style="padding:16px; background:var(--bg); border-radius:var(--radius-sm); margin-bottom:16px;">' +
-        '<p style="color:var(--text-secondary); font-size:.88rem; line-height:1.6; margin:0;">' + statusDesc + '</p>' +
+      '<div style="padding:12px; background:var(--bg); border-radius:var(--radius-sm); margin-bottom:14px; border: 1px solid var(--border);">' +
+        '<p style="color:var(--text-secondary); font-size:.8rem; line-height:1.5; margin:0;">' + statusDesc + '</p>' +
       '</div>' +
-      '<div style="display:flex;justify-content:flex-end;gap:10px;">' +
-        buttonHtml +
-      '</div>' +
+      '<div>' + buttonHtml + '</div>' +
     '</div>';
   }
+
   document.getElementById('client-area').innerHTML =
     (isAdmin ? '<a class="back-btn" onclick="backToAdmin()">\u2190 Back to All Companies</a>' : '') +
-    '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:16px" class="fade-up"><div><h2 style="font-size:1.8rem;font-weight:800;letter-spacing:-.02em;margin-bottom:4px">' + c.name + '</h2><div style="color:var(--accent-light);font-size:.9rem;font-weight:500">' + c.industry + '</div></div><button class="btn btn-primary btn-sm" onclick="openModal(\'modal-request\')">\uD83D\uDCCB Request a Task</button></div>' +
-    '<div class="stats-grid fade-up fade-up-1"><div class="stat-card"><div class="stat-icon" style="background:var(--info-bg);color:var(--info)">\uD83D\uDCDD</div><div class="stat-number">' + (c.stats?.posts||0) + '</div><div class="stat-label">Total Posts</div></div><div class="stat-card"><div class="stat-icon" style="background:var(--success-bg);color:var(--success)">\u2705</div><div class="stat-number">' + (c.stats?.published||0) + '</div><div class="stat-label">Published</div></div><div class="stat-card"><div class="stat-icon" style="background:var(--accent-glow);color:var(--accent-light)">\uD83D\uDCC5</div><div class="stat-number">' + (c.stats?.scheduled||0) + '</div><div class="stat-label">Scheduled</div></div><div class="stat-card"><div class="stat-icon" style="background:var(--warning-bg);color:var(--warning)">\uD83D\uDC65</div><div class="stat-number">' + (c.stats?.followers||0).toLocaleString() + '</div><div class="stat-label">Followers</div></div></div>' +
-    '<div class="card fade-up fade-up-2" style="margin-bottom:20px"><div class="card-header"><h3>\uD83D\uDD17 Connected Accounts</h3></div><div class="social-links">' + socialHtml + '</div></div>' +
-    driveHtml +
-    fundraiserTextHtml +
-    launchStatusHtml +
-    '<div class="dashboard-grid fade-up fade-up-3"><div><div class="card"><div class="card-header"><h3>\uD83D\uDCC5 Daily Updates</h3></div><div>' + updatesHtml + '</div></div></div><div><div class="card"><div class="card-header"><h3>\u2705 Tasks</h3><button class="btn btn-ghost btn-xs" onclick="openModal(\'modal-request\')">+ New Request</button></div>' + tasksHtml + '</div><div class="card"><div class="card-header"><h3>\uD83D\uDCCA Quick Stats</h3></div><div class="quick-stat-row"><span class="quick-stat-label">Engagement Rate</span><span class="quick-stat-value">4.2%</span></div><div class="quick-stat-row"><span class="quick-stat-label">Avg. Impressions</span><span class="quick-stat-value">3.1K</span></div><div class="quick-stat-row"><span class="quick-stat-label">Best Day</span><span class="quick-stat-value">Tuesday</span></div><div class="quick-stat-row"><span class="quick-stat-label">This Month</span><span class="quick-stat-value">' + (c.stats?.posts||0) + ' posts</span></div></div></div></div>';
+    
+    // Header
+    '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:16px" class="fade-up">' +
+      '<div>' +
+        '<h2 style="font-size:1.8rem;font-weight:800;letter-spacing:-.02em;margin-bottom:4px">' + c.name + '</h2>' +
+        '<div style="color:var(--accent-light);font-size:.9rem;font-weight:500">' + c.industry + '</div>' +
+      '</div>' +
+      '<button class="btn btn-primary btn-sm" onclick="openModal(\'modal-request\')">\uD83D\uDCCB Request a Task</button>' +
+    '</div>' +
+    
+    // Top Row Stats
+    '<div class="stats-grid fade-up fade-up-1">' +
+      '<div class="stat-card"><div class="stat-icon" style="background:var(--info-bg);color:var(--info)">\uD83D\uDCDD</div><div class="stat-number">' + (c.stats?.posts||0) + '</div><div class="stat-label">Total Posts</div></div>' +
+      '<div class="stat-card"><div class="stat-icon" style="background:var(--success-bg);color:var(--success)">\u2705</div><div class="stat-number">' + (c.stats?.published||0) + '</div><div class="stat-label">Published</div></div>' +
+      '<div class="stat-card"><div class="stat-icon" style="background:var(--accent-glow);color:var(--accent-light)">\uD83D\uDCC5</div><div class="stat-number">' + (c.stats?.scheduled||0) + '</div><div class="stat-label">Scheduled</div></div>' +
+      '<div class="stat-card"><div class="stat-icon" style="background:var(--warning-bg);color:var(--warning)">\uD83D\uDC65</div><div class="stat-number">' + (c.stats?.followers||0).toLocaleString() + '</div><div class="stat-label">Followers</div></div>' +
+    '</div>' +
+    
+    // Main Grid Area (Responsive Columns)
+    '<div class="client-dashboard-grid fade-up fade-up-2" style="display:grid;grid-template-columns:1.6fr 1fr;gap:20px;">' +
+      
+      // Left Column: Work & Active Feed
+      '<div class="dashboard-left-column" style="display:flex;flex-direction:column;gap:20px;">' +
+        '<div class="card" style="margin-bottom:0;">' +
+          '<div class="card-header"><h3>\uD83D\uDCC5 Daily Updates & Published Posts</h3></div>' +
+          '<div style="max-height:480px;overflow-y:auto;padding-right:8px;">' + updatesHtml + '</div>' +
+        '</div>' +
+        '<div class="card" style="margin-bottom:0;">' +
+          '<div class="card-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">' +
+            '<h3>\u2705 Active Task Pipeline</h3>' +
+            '<button class="btn btn-ghost btn-xs" onclick="openModal(\'modal-request\')">+ New Request</button>' +
+          '</div>' +
+          '<div>' + tasksHtml + '</div>' +
+        '</div>' +
+      '</div>' +
+      
+      // Right Column: Assets, Analytics & Custom Blocks (e.g., Fundraisers)
+      '<div class="dashboard-right-column" style="display:flex;flex-direction:column;gap:20px;">' +
+        '<div class="card" style="margin-bottom:0;">' +
+          '<div class="card-header"><h3>\uD83D\uDD17 Connected Social Channels</h3></div>' +
+          '<div class="social-links" style="display:flex;gap:8px;flex-wrap:wrap;margin:0;">' + socialHtml + '</div>' +
+        '</div>' +
+        '<div class="card" style="margin-bottom:0;">' +
+          '<div class="card-header"><h3>\uD83D\uDCCA Quick Performance</h3></div>' +
+          '<div class="quick-stat-row"><span class="quick-stat-label">Engagement Rate</span><span class="quick-stat-value" style="color:var(--accent);">4.2%</span></div>' +
+          '<div class="quick-stat-row"><span class="quick-stat-label">Avg. Impressions</span><span class="quick-stat-value">3.1K</span></div>' +
+          '<div class="quick-stat-row"><span class="quick-stat-label">Best Day</span><span class="quick-stat-value">Tuesday</span></div>' +
+          '<div class="quick-stat-row"><span class="quick-stat-label">This Month</span><span class="quick-stat-value">' + (c.stats?.posts||0) + ' posts</span></div>' +
+        '</div>' +
+        driveHtml +
+        fundraiserTextHtml +
+        launchStatusHtml +
+      '</div>' +
+      
+    '</div>';
 }
 async function backToAdmin() {
   document.getElementById('view-client').style.display = 'none';
